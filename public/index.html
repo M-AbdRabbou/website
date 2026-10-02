@@ -363,8 +363,8 @@ img{max-width:100%}
 <div class="band">
   <div class="band-in">
     <div class="metric"><div class="n" id="npub" data-to="71">71</div><div class="l">Refereed papers</div><div class="s" id="span">2018 &ndash; 2026</div></div>
-    <div class="metric"><div class="n" data-to="18">0</div><div class="l">h-index</div><div class="s">16 Scopus &middot; 17 WoS</div></div>
-    <div class="metric"><div class="n" data-to="800">0</div><div class="l">Citations</div><div class="s">665 Scopus &middot; 712 WoS</div></div>
+    <div class="metric"><div class="n" id="hidx" data-to="18">18</div><div class="l">h-index</div><div class="s" id="hsub">17 Scopus &middot; 17 WoS</div></div>
+    <div class="metric"><div class="n" id="cites" data-to="800">800</div><div class="l">Citations</div><div class="s" id="csub">665 Scopus &middot; 712 WoS</div></div>
     <div class="metric"><div class="n"><i>2</i></div><div class="l">Editorial boards</div><div class="s">Discover Physics &middot; Discover Quantum Science</div></div>
   </div>
 </div>
@@ -824,7 +824,7 @@ function runCounters(){
     function step(ts){
       if(t0===null) t0=ts;
       var k=Math.min(1,(ts-t0)/dur), e=1-Math.pow(1-k,3);
-      el.textContent=Math.round(to*e)+(k===1&&to===800?'+':'');
+      el.textContent=String(Math.round(to*e));
       if(k<1) requestAnimationFrame(step);
     }
     requestAnimationFrame(step);
@@ -832,7 +832,7 @@ function runCounters(){
 }
 if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   document.querySelectorAll('.metric .n[data-to]').forEach(function(el){
-    el.textContent=el.getAttribute('data-to')+(el.getAttribute('data-to')==='800'?'+':'');
+    el.textContent=el.getAttribute('data-to');
   });
 }else{ runCounters(); }
 
@@ -878,6 +878,22 @@ document.querySelectorAll('.copy').forEach(function(b){
     }catch(e){ fallback(); }
   });
 });
+
+/* ---------- h-index and citation count, read live from OpenAlex ---------- */
+(function(){
+  if(!window.fetch) return;
+  var h=document.getElementById('hidx'), c=document.getElementById('cites');
+  if(!h&&!c) return;
+  fetch('https://api.openalex.org/authors/https://orcid.org/0000-0003-3197-4724')
+  .then(function(r){ return r.ok?r.json():null; })
+  .then(function(d){
+    if(!d) return;
+    var st=d.summary_stats||{};
+    if(h&&st.h_index){ h.setAttribute('data-to',String(st.h_index)); h.textContent=String(st.h_index); }
+    if(c&&d.cited_by_count){ c.setAttribute('data-to',String(d.cited_by_count)); c.textContent=String(d.cited_by_count); }
+  })
+  .catch(function(){ /* the printed figures stand */ });
+})();
 
 /* ---------- peer-review record, read live from ORCID ---------- */
 (function(){
