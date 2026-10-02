@@ -71,10 +71,10 @@ a:hover{text-decoration:underline}
 
 /* ---------- hero ---------- */
 .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
-#field{position:absolute;inset:0;width:100%;height:100%;opacity:.42}
+#field{position:absolute;inset:0;width:100%;height:100%;opacity:.55}
 .hero-in{
   position:relative;max-width:var(--maxw);margin:0 auto;
-  padding-block:clamp(46px,8vw,86px);padding-inline:20px;
+  padding-block:clamp(52px,8vw,104px);padding-inline:20px;
 }
 .eyebrow{
   font-family:var(--data);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
@@ -749,74 +749,127 @@ document.querySelectorAll('.copy').forEach(function(b){
   }).catch(function(){ /* offline or blocked: the curated list above still stands */ });
 })();
 
-/* ---------- hero: Wigner function of an even coherent-state superposition,
-     rotating under free harmonic evolution. Blue is positive, teal is the
-     negative interference region between the two lobes. ---------- */
+/* ---------- hero: the Wigner function of an even cat state, drawn as a
+     rotating height field. The two peaks are the coherent components; the
+     oscillating trough between them is the negative region, which no
+     classical probability distribution can have. ---------- */
 (function(){
   var c=document.getElementById('field');
   if(!c) return;
   var ctx=c.getContext('2d');
-  var W=0,H=0,gw=0,gh=0,img=null,buf=null,off=null;
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var POS={r:43,g:69,b:200};     /* W > 0 */
-  var NEG={r:12,g:140,b:140};    /* W < 0, the non-classical part */
+  var N=46;            /* mesh resolution */
+  var SPAN=4.3;        /* phase-space half-width */
+  var x0=2.25;         /* separation of the coherent components */
+  var Z=null, GX=null, GP=null;
+  var W=0,H=0,cx=0,cy=0,scale=1,zs=1;
+  var ELEV=0.46;       /* viewing elevation */
 
-  var x0=2.35;                   /* lobe separation: wider, so the fringes resolve */
-  var SPAN=4.6;                  /* half-width of the plotted window */
+  /* W(x,p) for |psi> proportional to |a> + |-a>, a real */
+  function wigner(x,p){
+    var g=Math.exp(-p*p);
+    return ( Math.exp(-(x-x0)*(x-x0))*g
+           + Math.exp(-(x+x0)*(x+x0))*g
+           + 2*Math.exp(-x*x)*g*Math.cos(2*x0*p) ) / 2;
+  }
+
+  function grid(){
+    Z=new Float32Array((N+1)*(N+1));
+    GX=new Float32Array(N+1); GP=new Float32Array(N+1);
+    for(var i=0;i<=N;i++){
+      GX[i]=((i/N)*2-1)*SPAN;
+      GP[i]=((i/N)*2-1)*SPAN;
+    }
+    for(var a=0;a<=N;a++)
+      for(var b=0;b<=N;b++)
+        Z[a*(N+1)+b]=wigner(GX[a],GP[b]);
+  }
 
   function size(){
-    var rect=c.getBoundingClientRect();
-    W=Math.max(1,Math.round(rect.width)); H=Math.max(1,Math.round(rect.height));
-    c.width=W; c.height=H;
-    gw=Math.max(110,Math.round(W/3)); gh=Math.max(70,Math.round(H/3));
-    img=ctx.createImageData(gw,gh); buf=img.data;
-    off=document.createElement('canvas'); off.width=gw; off.height=gh;
+    var r=c.getBoundingClientRect();
+    var dpr=Math.min(2,window.devicePixelRatio||1);
+    W=Math.max(1,Math.round(r.width)); H=Math.max(1,Math.round(r.height));
+    c.width=Math.round(W*dpr); c.height=Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    var narrow = W<760;
+    cx = narrow ? W*0.5 : W*0.70;
+    cy = H*0.56;
+    scale = Math.min(W*(narrow?0.085:0.075), H*0.115);
+    zs = scale*1.45;
   }
 
-  function frame(t){
-    if(!img) return;
-    var th=t*0.00019;
-    var ct=Math.cos(th), st=Math.sin(th);
-    var ar=(gw/gh);
-    for(var j=0;j<gh;j++){
-      var p=((j/(gh-1))*2-1)*SPAN;
-      for(var i=0;i<gw;i++){
-        var x=((i/(gw-1))*2-1)*SPAN*ar;
-        /* free evolution rotates the quasi-probability in phase space */
-        var xr= x*ct + p*st;
-        var pr=-x*st + p*ct;
-        var g=Math.exp(-pr*pr);
-        var w = Math.exp(-(xr-x0)*(xr-x0))*g
-              + Math.exp(-(xr+x0)*(xr+x0))*g
-              + 2*Math.exp(-xr*xr)*g*Math.cos(2*x0*pr);
-        w/=2;
-        var m=Math.min(1,Math.abs(w));
-        var col = w>=0 ? POS : NEG;
-        var o=(j*gw+i)*4;
-        buf[o]=col.r; buf[o+1]=col.g; buf[o+2]=col.b;
-        /* a low exponent lifts the faint fringes instead of crushing them to nothing */
-        buf[o+3]=Math.pow(m,0.5)*255;
+  var sx=null, sy=null;
+  function project(th){
+    var ct=Math.cos(th), st=Math.sin(th), se=Math.sin(ELEV);
+    var n=(N+1)*(N+1);
+    if(!sx||sx.length!==n){ sx=new Float32Array(n); sy=new Float32Array(n); }
+    for(var a=0;a<=N;a++){
+      var x=GX[a];
+      for(var b=0;b<=N;b++){
+        var p=GP[b], k=a*(N+1)+b;
+        var X = x*ct - p*st;
+        var Y = x*st + p*ct;
+        sx[k]=cx + X*scale;
+        sy[k]=cy - Y*se*scale - Z[k]*zs;
       }
     }
-    off.getContext('2d').putImageData(img,0,0);
-    ctx.clearRect(0,0,W,H);
-    ctx.imageSmoothingEnabled=true;
-    ctx.imageSmoothingQuality='high';
-    ctx.drawImage(off,0,0,gw,gh,0,0,W,H);
+    return {st:st,ct:ct};
   }
 
-  var raf=null;
-  function loop(ts){ frame(ts); raf=requestAnimationFrame(loop); }
+  function draw(th){
+    var r=project(th);
+    ctx.clearRect(0,0,W,H);
+    ctx.lineWidth=0.6;
+    /* paint far to near: Y = x*sin + p*cos, so the sign of each term
+       fixes the iteration direction and no per-quad sorting is needed */
+    var ai = r.st>0 ? -1 : 1, bi = r.ct>0 ? -1 : 1;
+    var a0 = r.st>0 ? N-1 : 0,  aEnd = r.st>0 ? -1 : N;
+    var b0 = r.ct>0 ? N-1 : 0,  bEnd = r.ct>0 ? -1 : N;
+    for(var a=a0; a!==aEnd; a+=ai){
+      for(var b=b0; b!==bEnd; b+=bi){
+        var k00=a*(N+1)+b, k10=(a+1)*(N+1)+b, k11=(a+1)*(N+1)+b+1, k01=a*(N+1)+b+1;
+        var z=(Z[k00]+Z[k10]+Z[k11]+Z[k01])*0.25;
+        var m=Math.min(1,Math.abs(z)/0.72);
+        if(m<0.012) continue;
+        /* slope along x gives a cheap directional shade */
+        var sl=(Z[k10]-Z[k00])*1.6;
+        var sh=Math.max(0.45,Math.min(1.35,1+sl));
+        var R,G,B;
+        if(z>=0){ R=43; G=69; B=200; } else { R=12; G=150; B=146; }
+        R=Math.min(255,R*sh+28); G=Math.min(255,G*sh+28); B=Math.min(255,B*sh+18);
+        var al=Math.pow(m,0.62)*0.80;
+        ctx.fillStyle='rgba('+(R|0)+','+(G|0)+','+(B|0)+','+al.toFixed(3)+')';
+        ctx.beginPath();
+        ctx.moveTo(sx[k00],sy[k00]);
+        ctx.lineTo(sx[k10],sy[k10]);
+        ctx.lineTo(sx[k11],sy[k11]);
+        ctx.lineTo(sx[k01],sy[k01]);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle='rgba('+(R*0.72|0)+','+(G*0.72|0)+','+(B*0.72|0)+','+(al*0.55).toFixed(3)+')';
+        ctx.stroke();
+      }
+    }
+  }
+
+  var raf=null, last=0;
+  function loop(ts){
+    raf=requestAnimationFrame(loop);
+    if(ts-last<33) return;      /* ~30 fps is plenty for this rotation */
+    last=ts;
+    draw(ts*0.000085);
+  }
   function start(){
     if(raf) cancelAnimationFrame(raf);
-    if(reduce){ frame(2600); } else { raf=requestAnimationFrame(loop); }
+    if(reduce){ draw(0.9); } else { raf=requestAnimationFrame(loop); }
   }
 
-  size(); frame(2600); start();
+  grid(); size(); draw(0.9); start();
+
   var rt=null;
   window.addEventListener('resize',function(){
-    clearTimeout(rt); rt=setTimeout(function(){ size(); frame(performance.now()); },140);
+    clearTimeout(rt); rt=setTimeout(function(){ size(); draw(performance.now()*0.000085); },150);
   });
   document.addEventListener('visibilitychange',function(){
     if(document.hidden){ if(raf){ cancelAnimationFrame(raf); raf=null; } }
