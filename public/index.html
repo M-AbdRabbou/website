@@ -183,6 +183,19 @@ section+section{border-top:1px solid var(--line)}
 .empty{padding:40px 0;color:var(--muted);font-size:14px}
 @media(max-width:560px){.pub{grid-template-columns:1fr;gap:0}.pub .idx{display:none}}
 
+/* ---------- portrait ---------- */
+.aboutgrid{display:grid;grid-template-columns:232px 1fr;gap:38px;align-items:start}
+.portrait{margin:0;min-width:0}
+.portrait img{
+  display:block;width:100%;height:auto;border-radius:12px;
+  border:1.5px solid var(--line);
+  box-shadow:0 14px 34px -18px rgba(10,15,28,.5);
+}
+@media(max-width:660px){
+  .aboutgrid{grid-template-columns:1fr;gap:26px}
+  .portrait{max-width:220px}
+}
+
 /* ---------- editorial boards ---------- */
 .boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
 .board{
@@ -349,10 +362,15 @@ img{max-width:100%}
 
 <section id="about" class="rv">
   <div class="head"><span class="num">01</span><h2>About</h2></div>
+  <div class="aboutgrid">
+  <figure class="portrait">
+    <img src="portrait.jpg" width="520" height="669" alt="Mahmoud Y. Abd-Rabbou" loading="lazy">
+  </figure>
   <div class="prose">
     <p>I work on how quantum systems hold, lose and transfer information. My research sits between quantum information theory, quantum optics and open-system dynamics, with recent work on quantum thermodynamic machines, quantum batteries, and information scrambling.</p>
     <p>I completed my Ph.D. in quantum information at <strong>Al-Azhar University</strong> in 2020 under Prof. A.-S. F. Obada, and I have taught in its Department of Mathematics since 2014, as a lecturer since 2021. Since 2024 I have been a postdoctoral researcher at the <strong>School of Physics, University of Chinese Academy of Sciences</strong>, working with Prof. Cong-Feng Qiao.</p>
     <p>A recent direction in my group applies machine learning to quantum state characterisation: stacked ensemble classifiers for entanglement detection in high-spin systems, and neural surrogate models that replace expensive statistical sampling of entanglement in light-matter systems.</p>
+  </div>
   </div>
 </section>
 
