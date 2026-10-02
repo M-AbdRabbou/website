@@ -180,6 +180,14 @@ section+section{border-top:1px solid var(--line)}
   border:1px solid var(--line);color:var(--accent);white-space:nowrap;
 }
 .pub .doi:hover{text-decoration:none;background:var(--accent-soft)}
+.pub .pdf{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:var(--data);font-size:11px;font-weight:600;padding:3px 10px 3px 8px;
+  border-radius:4px;border:1.5px solid #0E7A4F;color:#0E7A4F;
+  background:#E6F6EE;white-space:nowrap;
+}
+.pub .pdf:hover{text-decoration:none;background:#0E7A4F;color:#fff}
+.pub .pdf svg{flex:none}
 .empty{padding:40px 0;color:var(--muted);font-size:14px}
 @media(max-width:560px){.pub{grid-template-columns:1fr;gap:0}.pub .idx{display:none}}
 
@@ -492,6 +500,9 @@ img{max-width:100%}
 
 <section id="publications" class="rv">
   <div class="head"><span class="num">06</span><h2>Publications</h2></div>
+  <div class="prose" style="margin-bottom:24px">
+    <p>A green PDF button marks a paper whose full text is free to read, either at the publisher or on arXiv. The rest are behind the publisher's paywall and are reachable through their DOI.</p>
+  </div>
   <div class="pubtools">
     <input id="q" type="search" placeholder="Search title, author, journal&hellip;" autocomplete="off">
   </div>
@@ -696,6 +707,42 @@ years.sort(function(a,b){return b-a;});
   if(sp){ sp.innerHTML=years[years.length-1]+' &ndash; '+years[0]; }
 })();
 
+var FREE={
+  "10.1002/andp.202200523":"https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/andp.202200523",
+  "10.1002/andp.202300423":"https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/andp.202300423",
+  "10.1002/andp.202500258":"https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/andp.202500258",
+  "10.1007/s11082-022-03936-w":"https://link.springer.com/content/pdf/10.1007/s11082-022-03936-w.pdf",
+  "10.1007/s11082-023-04926-2":"https://link.springer.com/content/pdf/10.1007/s11082-023-04926-2.pdf",
+  "10.1007/s11082-024-06444-1":"https://link.springer.com/content/pdf/10.1007/s11082-024-06444-1.pdf",
+  "10.1007/s11128-023-03969-4":"https://link.springer.com/content/pdf/10.1007/s11128-023-03969-4.pdf",
+  "10.1007/s11128-024-04298-w":"https://arxiv.org/pdf/2307.05412",
+  "10.1007/s11128-024-04631-3":"https://arxiv.org/pdf/2409.08082",
+  "10.1007/s12648-024-03507-7":"https://link.springer.com/content/pdf/10.1007/s12648-024-03507-7.pdf",
+  "10.1016/j.aej.2022.01.051":"https://www.sciencedirect.com/science/article/pii/S1110016822000618/pdf",
+  "10.1016/j.aej.2023.01.057":"https://doi.org/10.1016/j.aej.2023.01.057",
+  "10.1016/j.aej.2023.05.070":"https://doi.org/10.1016/j.aej.2023.05.070",
+  "10.1016/j.aej.2023.06.075":"https://doi.org/10.1016/j.aej.2023.06.075",
+  "10.1016/j.rinp.2021.105012":"https://www.sciencedirect.com/science/article/pii/S2211379721010111/pdf",
+  "10.1016/j.rinp.2022.105540":"https://www.sciencedirect.com/science/article/pii/S221137972200273X/pdf",
+  "10.1038/s41598-023-41907-7":"https://www.nature.com/articles/s41598-023-41907-7.pdf",
+  "10.1038/s41598-026-53789-6":"https://www.nature.com/articles/s41598-026-53789-6.pdf",
+  "10.1080/16583655.2025.2565052":"https://www.tandfonline.com/doi/pdf/10.1080/16583655.2025.2565052",
+  "10.1088/1361-6382/ae9ae9":"https://doi.org/10.1088/1361-6382/ae9ae9",
+  "10.1088/1361-6455/adbc56":"https://arxiv.org/pdf/2412.19715",
+  "10.1088/1612-202x/abe7de":"https://iopscience.iop.org/article/10.1088/1612-202X/abe7de/pdf",
+  "10.1088/1751-8121/ade1b9":"https://doi.org/10.1088/1751-8121/ade1b9",
+  "10.1109/access.2021.3069163":"https://ieeexplore.ieee.org/ielx7/6287639/9312710/09387295.pdf",
+  "10.1140/epjc/s10052-024-12393-6":"https://link.springer.com/content/pdf/10.1140/epjc/s10052-024-12393-6.pdf",
+  "10.1140/epjc/s10052-025-14175-0":"https://link.springer.com/content/pdf/10.1140/epjc/s10052-025-14175-0.pdf",
+  "10.1142/s0217732322501437":"https://arxiv.org/pdf/2209.03432",
+  "10.1155/2022/5258035":"https://downloads.hindawi.com/journals/amp/2022/5258035.pdf",
+  "10.1364/josab.477867":"https://arxiv.org/pdf/2203.13780",
+  "10.2298/tsci2406179z":"http://www.doiserbia.nb.rs/ft.aspx?id=0354-98362406179Z",
+  "10.2298/tsci2406855k":"http://www.doiserbia.nb.rs/ft.aspx?id=0354-98362406855K",
+  "10.3390/math10234458":"https://www.mdpi.com/2227-7390/10/23/4458/pdf",
+  "10.3390/sym14040811":"https://www.mdpi.com/2073-8994/14/4/811/pdf"
+};
+
 var state={y:years[0],q:""};
 var pubsEl=document.getElementById('pubs');
 var countEl=document.getElementById('count');
@@ -725,6 +772,15 @@ function entry(p,total){
     '<div class="au">'+mark(p[1])+'</div>'+
     '<div class="meta"><span class="j">'+esc(p[3])+'</span>'+
     '<a class="doi" href="https://doi.org/'+p[4]+'" target="_blank" rel="noopener">DOI</a>'+
+    (FREE[p[4].toLowerCase()]
+      ? '<a class="pdf" href="'+FREE[p[4].toLowerCase()]+'" target="_blank" rel="noopener">'+
+        '<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">'+
+        '<path d="M8 1.5v8m0 0L5 6.6M8 9.5l3-2.9" fill="none" stroke="currentColor" '+
+        'stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'+
+        '<path d="M2.6 11.4v1.5a1.6 1.6 0 0 0 1.6 1.6h7.6a1.6 1.6 0 0 0 1.6-1.6v-1.5" '+
+        'fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'+
+        '</svg>PDF</a>'
+      : '')+
     '</div></div></article>';
 }
 
