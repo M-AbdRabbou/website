@@ -215,9 +215,20 @@ section+section{border-top:1px solid var(--line)}
   background:var(--accent-soft);color:var(--accent);border-radius:5px;padding:3px 8px;
 }
 
+/* ---------- year tabs ---------- */
+.years{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.yb{
+  font-family:var(--data);font-size:17px;font-weight:600;letter-spacing:-0.01em;
+  padding:9px 16px;border-radius:8px;border:1.5px solid var(--line);
+  background:var(--surface);color:var(--muted);cursor:pointer;
+  font-variant-numeric:tabular-nums;transition:all .16s;
+}
+.yb:hover{color:var(--ink);border-color:var(--accent)}
+.yb.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
 /* ---------- year groups in the publication list ---------- */
 .ybig{
-  font-family:var(--display);font-size:clamp(30px,4.4vw,46px);font-weight:900;
+  font-family:var(--display);font-size:clamp(26px,3.6vw,38px);font-weight:900;
   color:var(--accent);letter-spacing:-0.03em;line-height:1;
   border-top:3px solid var(--ink);padding-top:16px;margin-top:38px;margin-bottom:2px;
   font-variant-numeric:tabular-nums;
@@ -455,37 +466,9 @@ img{max-width:100%}
   </div>
   <h3 class="subhead">Peer review</h3>
   <div class="prose">
-    <p>70 reviews across 27 journals, recorded under my ORCID. The count after each title is the number of manuscripts refereed.</p>
+    <p id="revnote">Read live from my ORCID record. The count after each title is the number of manuscripts refereed.</p>
   </div>
-  <div class="revgrid">
-    <span class="rev"><b>Physica A</b><i>17</i></span>
-    <span class="rev"><b>Symmetry</b><i>6</i></span>
-    <span class="rev"><b>Alexandria Engineering Journal</b><i>4</i></span>
-    <span class="rev"><b>Annals of Physics</b><i>4</i></span>
-    <span class="rev"><b>Physica Scripta</b><i>3</i></span>
-    <span class="rev"><b>Physica B</b><i>3</i></span>
-    <span class="rev"><b>Advanced Quantum Technologies</b><i>3</i></span>
-    <span class="rev"><b>Photonics</b><i>3</i></span>
-    <span class="rev"><b>Optical and Quantum Electronics</b><i>3</i></span>
-    <span class="rev"><b>Results in Engineering</b><i>2</i></span>
-    <span class="rev"><b>Chinese Journal of Physics</b><i>2</i></span>
-    <span class="rev"><b>Physics Open</b><i>2</i></span>
-    <span class="rev"><b>Physica E</b><i>2</i></span>
-    <span class="rev"><b>European Physical Journal Plus</b><i>2</i></span>
-    <span class="rev"><b>Indian Journal of Physics</b><i>2</i></span>
-    <span class="rev"><b>Annalen der Physik</b><i>1</i></span>
-    <span class="rev"><b>Scientific Reports</b><i>1</i></span>
-    <span class="rev"><b>Journal of Physics B</b><i>1</i></span>
-    <span class="rev"><b>Quantum Reports</b><i>1</i></span>
-    <span class="rev"><b>Optics Communications</b><i>1</i></span>
-    <span class="rev"><b>Optik</b><i>1</i></span>
-    <span class="rev"><b>Results in Optics</b><i>1</i></span>
-    <span class="rev"><b>Applied Physics A</b><i>1</i></span>
-    <span class="rev"><b>Physica C</b><i>1</i></span>
-    <span class="rev"><b>Micro and Nanostructures</b><i>1</i></span>
-    <span class="rev"><b>Applied Sciences</b><i>1</i></span>
-    <span class="rev"><b>Axioms</b><i>1</i></span>
-  </div>
+  <div class="revgrid" id="revgrid"><span class="rev"><b>Loading from ORCID</b></span></div>
 </section>
 
 <section id="publications" class="rv">
@@ -493,6 +476,7 @@ img{max-width:100%}
   <div class="pubtools">
     <input id="q" type="search" placeholder="Search title, author, journal&hellip;" autocomplete="off">
   </div>
+  <div class="years" id="years"></div>
   <div class="count" id="count"></div>
   <div class="pubs" id="pubs"></div>
   <div class="sync" id="sync" hidden>
@@ -692,42 +676,66 @@ years.sort(function(a,b){return b-a;});
   if(sp){ sp.innerHTML=years[years.length-1]+' &ndash; '+years[0]; }
 })();
 
-var state={q:""};
+var state={y:years[0],q:""};
 var pubsEl=document.getElementById('pubs');
 var countEl=document.getElementById('count');
+var yearsEl=document.getElementById('years');
 
 function esc(x){ return x.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function mark(a){ return esc(a).replace(/M\. Y\. Abd-Rabbou/g,'<b>M. Y. Abd-Rabbou</b>'); }
 
+function chips(){
+  yearsEl.innerHTML='';
+  function add(label,val){
+    var b=document.createElement('button');
+    b.type='button';
+    b.className='yb'+(val===state.y?' on':'');
+    b.textContent=label;
+    b.onclick=function(){ state.y=val; draw(); };
+    yearsEl.appendChild(b);
+  }
+  years.forEach(function(y){ add(String(y),y); });
+  add('All','all');
+}
+
+function entry(p,total){
+  return '<article class="pub">'+
+    '<div class="idx">'+(total-P.indexOf(p))+'</div>'+
+    '<div><div class="t">'+esc(p[2])+'</div>'+
+    '<div class="au">'+mark(p[1])+'</div>'+
+    '<div class="meta"><span class="j">'+esc(p[3])+'</span>'+
+    '<a class="doi" href="https://doi.org/'+p[4]+'" target="_blank" rel="noopener">DOI</a>'+
+    '</div></div></article>';
+}
+
 function draw(){
+  chips();
   var q=state.q.toLowerCase();
   var rows=P.filter(function(p){
+    if(state.y!=='all' && p[0]!==state.y) return false;
     if(!q) return true;
     return (p[1]+' '+p[2]+' '+p[3]+' '+p[0]).toLowerCase().indexOf(q)>=0;
   });
-  countEl.textContent = q ? rows.length+' of '+P.length+' refereed papers'
-                          : P.length+' refereed papers, newest first';
+  countEl.textContent = rows.length+(rows.length===1?' paper':' papers')+
+    (state.y==='all' ? '' : ' in '+state.y)+' of '+P.length+' in total';
   if(!rows.length){ pubsEl.innerHTML='<div class="empty">No paper matches that search.</div>'; return; }
 
-  var total=P.length, html='', cur=null, open=false;
-  rows.forEach(function(p){
-    if(p[0]!==cur){
-      if(open) html+='</div>';
-      cur=p[0];
-      var n=rows.filter(function(r){ return r[0]===cur; }).length;
-      html+='<div class="ygroup"><div class="ybig">'+cur+'</div>'+
-            '<div class="ycount">'+n+(n===1?' paper':' papers')+'</div>';
-      open=true;
-    }
-    var idx=total-P.indexOf(p);
-    html+='<article class="pub">'+
-      '<div class="idx">'+idx+'</div>'+
-      '<div><div class="t">'+esc(p[2])+'</div>'+
-      '<div class="au">'+mark(p[1])+'</div>'+
-      '<div class="meta"><span class="j">'+esc(p[3])+'</span>'+
-      '<a class="doi" href="https://doi.org/'+p[4]+'" target="_blank" rel="noopener">DOI</a></div></div></article>';
-  });
-  if(open) html+='</div>';
+  var total=P.length, html='';
+  if(state.y==='all'){
+    var cur=null, open=false;
+    rows.forEach(function(p){
+      if(p[0]!==cur){
+        if(open) html+='</div>';
+        cur=p[0];
+        html+='<div class="ygroup"><div class="ybig">'+cur+'</div>';
+        open=true;
+      }
+      html+=entry(p,total);
+    });
+    if(open) html+='</div>';
+  }else{
+    rows.forEach(function(p){ html+=entry(p,total); });
+  }
   pubsEl.innerHTML=html;
 }
 document.getElementById('q').addEventListener('input',function(e){ state.q=e.target.value; draw(); });
@@ -794,6 +802,75 @@ document.querySelectorAll('.copy').forEach(function(b){
     }catch(e){ fallback(); }
   });
 });
+
+/* ---------- peer-review record, read live from ORCID ---------- */
+(function(){
+  var grid=document.getElementById('revgrid'), note=document.getElementById('revnote');
+  if(!grid||!window.fetch) return;
+
+  /* ISSNs already seen, so the common case needs no extra lookups */
+  var NAMES={
+    '0378-4371':'Physica A','2073-8994':'Symmetry','1110-0168':'Alexandria Engineering Journal',
+    '0003-4916':'Annals of Physics','1402-4896':'Physica Scripta','0921-4526':'Physica B',
+    '2511-9044':'Advanced Quantum Technologies','2304-6732':'Photonics',
+    '0306-8919':'Optical and Quantum Electronics','2590-1230':'Results in Engineering',
+    '0577-9073':'Chinese Journal of Physics','2666-0326':'Physics Open','1386-9477':'Physica E',
+    '2190-5444':'European Physical Journal Plus','0973-1458':'Indian Journal of Physics',
+    '1521-3889':'Annalen der Physik','0947-8396':'Applied Physics A','2045-2322':'Scientific Reports',
+    '0921-4534':'Physica C','0030-4026':'Optik','0030-4018':'Optics Communications',
+    '2773-0123':'Micro and Nanostructures','2666-9501':'Results in Optics',
+    '1361-6455':'Journal of Physics B','2624-960X':'Quantum Reports','2075-1680':'Axioms',
+    '2076-3417':'Applied Sciences'
+  };
+
+  function render(rows,total,n){
+    grid.innerHTML=rows.map(function(r){
+      return '<span class="rev"><b>'+r.name.replace(/&/g,'&amp;').replace(/</g,'&lt;')+
+             '</b><i>'+r.n+'</i></span>';
+    }).join('');
+    if(note) note.textContent=total+' reviews across '+n+
+      ' journals, read live from my ORCID record. The count after each title is the number of manuscripts refereed.';
+  }
+
+  fetch('https://pub.orcid.org/v3.0/0000-0003-3197-4724/peer-reviews',
+        {headers:{'Accept':'application/json'}})
+  .then(function(r){ return r.ok?r.json():null; })
+  .then(function(d){
+    if(!d||!d.group) return;
+    var rows=[], unknown=[];
+    d.group.forEach(function(g){
+      var ids=(g['external-ids']||{})['external-id']||[];
+      var v=ids.length?String(ids[0]['external-id-value']||''):'';
+      var issn=v.replace(/^issn:/i,'').toUpperCase();
+      var n=(g['peer-review-group']||[]).length;
+      if(!issn||!n) return;
+      var name=NAMES[issn];
+      var row={issn:issn,n:n,name:name||issn};
+      if(!name) unknown.push(row);
+      rows.push(row);
+    });
+    if(!rows.length) return;
+    rows.sort(function(a,b){ return b.n-a.n || a.name.localeCompare(b.name); });
+    var total=rows.reduce(function(a,b){ return a+b.n; },0);
+    render(rows,total,rows.length);
+
+    /* resolve any journal the page has not seen before */
+    if(unknown.length && unknown.length<=8){
+      Promise.all(unknown.map(function(r){
+        return fetch('https://api.crossref.org/journals/'+r.issn)
+          .then(function(x){ return x.ok?x.json():null; })
+          .then(function(j){ if(j&&j.message&&j.message.title) r.name=j.message.title; })
+          .catch(function(){});
+      })).then(function(){
+        rows.sort(function(a,b){ return b.n-a.n || a.name.localeCompare(b.name); });
+        render(rows,total,rows.length);
+      });
+    }
+  })
+  .catch(function(){
+    if(note) note.textContent='The peer-review record is kept on my ORCID profile.';
+  });
+})();
 
 /* ---------- live check against Crossref, keyed on my ORCID ---------- */
 (function(){
