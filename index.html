@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Mahmoud Y. Abd-Rabbou, quantum information theory: research, editorial service, and a searchable index of refereed papers.">
+<meta name="author" content="Mahmoud Y. Abd-Rabbou">
+<title>Mahmoud Abd-Rabbou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: fixed top rail, full-bleed interference hero, single reading column (65ch) with
+   full-width data bands for metrics and the publication index. */
+:root{
+  --paper:#EEF1F7;
+  --surface:#FFFFFF;
+  --surface-2:#F6F8FC;
+  --ink:#0F1522;
+  --muted:#5B6678;
+  --line:#D5DCE8;
+  --accent:#2B45C8;
+  --accent-soft:#E6EAFB;
+  --spectral:#0C8C8C;
+  --display:'Spectral',Georgia,'Times New Roman',serif;
+  --body:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --data:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --maxw:1160px;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;font-weight:600;letter-spacing:-0.01em}
+p{margin:0}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+
+/* ---------- top rail ---------- */
+.rail{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:60;
+  background:color-mix(in srgb,var(--paper) 88%,transparent);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.rail-in{
+  max-width:var(--maxw);margin:0 auto;
+  padding-block:10px;padding-inline:20px;
+  display:flex;align-items:center;gap:18px;
+}
+.brand{font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:-0.01em;white-space:nowrap}
+.brand span{color:var(--muted);font-weight:400}
+.rail nav{
+  margin-left:auto;display:flex;gap:4px;overflow-x:auto;
+  scrollbar-width:none;min-width:0;
+}
+.rail nav::-webkit-scrollbar{display:none}
+.rail nav a{
+  font-size:12.5px;color:var(--muted);padding:6px 10px;border-radius:999px;
+  white-space:nowrap;letter-spacing:0.02em;transition:color .2s,background .2s;
+}
+.rail nav a:hover{text-decoration:none;color:var(--ink);background:var(--surface-2)}
+.rail nav a.on{color:var(--accent);background:var(--accent-soft)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+#field{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+.hero-in{
+  position:relative;max-width:var(--maxw);margin:0 auto;
+  padding-block:clamp(46px,8vw,86px);padding-inline:20px;
+}
+.eyebrow{
+  font-family:var(--data);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--spectral);margin-bottom:18px;
+}
+.hero h1{font-size:clamp(34px,6.4vw,62px);line-height:1.04;font-weight:700;letter-spacing:-0.025em}
+.hero h1 .ar{display:block;font-size:.42em;color:var(--muted);font-weight:400;margin-top:10px;letter-spacing:0;direction:rtl;text-align:left;unicode-bidi:isolate}
+.role{
+  font-family:var(--display);font-style:italic;font-size:clamp(18px,2.6vw,23px);
+  color:var(--ink);margin-top:20px;max-width:30ch;
+}
+.affil{margin-top:22px;display:grid;gap:7px;max-width:56ch}
+.affil div{font-size:14.5px;color:var(--muted);padding-left:15px;border-left:2px solid var(--line)}
+.affil b{color:var(--ink);font-weight:500}
+.ids{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+.ids a,.ids span{
+  font-family:var(--data);font-size:12px;padding:7px 13px;border-radius:999px;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  transition:border-color .2s,transform .2s;
+}
+.ids a:hover{text-decoration:none;border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+
+/* ---------- metric band ---------- */
+.band{background:var(--surface);border-bottom:1px solid var(--line)}
+.band-in{
+  max-width:var(--maxw);margin:0 auto;padding-inline:20px;padding-block:26px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+}
+.metric .n{
+  font-family:var(--display);font-size:clamp(28px,4.6vw,42px);font-weight:700;
+  line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;
+}
+.metric .n i{font-style:normal;color:var(--spectral)}
+.metric .l{font-family:var(--data);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin-top:9px}
+.metric .s{font-size:12px;color:var(--muted);margin-top:3px}
+@media(max-width:680px){.band-in{grid-template-columns:repeat(2,1fr);gap:24px 16px}}
+
+/* ---------- sections ---------- */
+section{max-width:var(--maxw);margin:0 auto;padding-inline:20px;padding-block:clamp(44px,6vw,72px)}
+section+section{border-top:1px solid var(--line)}
+.head{display:flex;align-items:baseline;gap:14px;margin-bottom:30px;flex-wrap:wrap}
+.head h2{font-size:clamp(23px,3.4vw,31px)}
+.head .num{font-family:var(--data);font-size:11px;color:var(--spectral);letter-spacing:.14em}
+.prose{max-width:66ch;font-size:16.5px;color:var(--ink);display:grid;gap:16px}
+.prose p{color:var(--muted)}
+.prose strong{color:var(--ink);font-weight:500}
+
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+.tag{
+  font-size:13px;padding:7px 14px;border-radius:6px;background:var(--surface);
+  border:1px solid var(--line);color:var(--ink);
+}
+.tag::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--spectral);margin-right:9px;vertical-align:middle}
+
+/* ---------- timeline ---------- */
+.tl{display:grid;gap:0;max-width:78ch}
+.tl-row{
+  display:grid;grid-template-columns:118px 1fr;gap:22px;
+  padding-block:20px;border-top:1px solid var(--line);
+}
+.tl-row:first-child{border-top:none;padding-top:0}
+.tl .yr{font-family:var(--data);font-size:12.5px;color:var(--spectral);padding-top:4px;white-space:nowrap}
+.tl h3{font-size:17px;font-weight:600}
+.tl .where{font-size:14px;color:var(--muted);margin-top:5px}
+.tl .now{
+  display:inline-block;font-family:var(--data);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--accent);background:var(--accent-soft);
+  padding:2px 8px;border-radius:4px;margin-left:9px;vertical-align:2px;
+}
+@media(max-width:560px){.tl-row{grid-template-columns:1fr;gap:6px}.tl .yr{padding-top:0}}
+
+/* ---------- publications ---------- */
+.pubtools{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:22px}
+#q{
+  flex:1;min-width:200px;font-family:var(--body);font-size:14px;
+  padding:11px 15px;border-radius:8px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink);
+}
+#q::placeholder{color:var(--muted)}
+.years{display:flex;flex-wrap:wrap;gap:6px}
+.yb{
+  font-family:var(--data);font-size:12px;padding:6px 11px;border-radius:6px;
+  border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer;
+  transition:all .18s;
+}
+.yb:hover{color:var(--ink);border-color:var(--accent)}
+.yb.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.count{font-family:var(--data);font-size:12px;color:var(--muted);margin-bottom:16px}
+.pubs{display:grid;gap:0}
+.pub{
+  display:grid;grid-template-columns:52px 1fr;gap:20px;
+  padding-block:19px;border-top:1px solid var(--line);
+}
+.pub .idx{font-family:var(--data);font-size:12px;color:var(--muted);padding-top:3px;font-variant-numeric:tabular-nums}
+.pub .t{font-family:var(--display);font-size:17px;line-height:1.35;font-weight:600;min-width:0}
+.pub .au{font-size:13.5px;color:var(--muted);margin-top:7px;min-width:0}
+.pub .au b{color:var(--ink);font-weight:600}
+.pub .meta{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:9px}
+.pub .j{font-size:13px;color:var(--muted);font-style:italic}
+.pub .doi{
+  font-family:var(--data);font-size:11px;padding:3px 9px;border-radius:4px;
+  border:1px solid var(--line);color:var(--accent);white-space:nowrap;
+}
+.pub .doi:hover{text-decoration:none;background:var(--accent-soft)}
+.pub .y{
+  font-family:var(--data);font-size:11px;color:var(--spectral);
+  border:1px solid var(--line);border-radius:4px;padding:3px 8px;
+}
+.empty{padding:40px 0;color:var(--muted);font-size:14px}
+@media(max-width:560px){.pub{grid-template-columns:1fr;gap:0}.pub .idx{display:none}}
+
+/* ---------- editorial boards ---------- */
+.boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.board{
+  display:block;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:22px;min-width:0;color:var(--ink);
+  transition:border-color .2s,transform .2s;
+}
+.board:hover{text-decoration:none;border-color:var(--accent);transform:translateY(-2px)}
+.board .bname{font-family:var(--display);font-size:19px;font-weight:600;line-height:1.25}
+.board .brole{font-size:13.5px;color:var(--spectral);margin-top:8px}
+.board .bpub{font-size:13px;color:var(--muted);margin-top:3px}
+.board .bgo{
+  display:inline-block;margin-top:16px;font-family:var(--data);font-size:11px;
+  letter-spacing:.08em;color:var(--accent);
+}
+
+/* ---------- ORCID sync strip ---------- */
+.sync{
+  margin-top:30px;padding:18px 20px;border:1px dashed var(--line);border-radius:10px;
+  background:var(--surface-2);
+}
+.sync h3{font-family:var(--body);font-size:13px;font-weight:600;margin-bottom:4px}
+.sync .note{font-size:13px;color:var(--muted)}
+.sync .list{display:grid;gap:12px;margin-top:14px}
+.sync .row{display:grid;gap:3px}
+.sync .rt{font-family:var(--display);font-size:15px;font-weight:600;line-height:1.3}
+.sync .rm{font-size:12.5px;color:var(--muted)}
+.sync .rm a{font-family:var(--data);font-size:11px}
+
+/* ---------- two-column lists ---------- */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:26px}
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:22px;min-width:0;
+}
+.card h3{font-size:15px;margin-bottom:14px}
+.card ul{margin:0;padding-left:18px;display:grid;gap:9px}
+.card li{font-size:14px;color:var(--muted)}
+.card li b{color:var(--ink);font-weight:500}
+
+.conf{display:grid;gap:0;max-width:78ch}
+.conf-row{display:grid;grid-template-columns:104px 1fr;gap:20px;padding-block:15px;border-top:1px solid var(--line)}
+.conf-row:first-child{border-top:none;padding-top:0}
+.conf .d{font-family:var(--data);font-size:12px;color:var(--spectral);white-space:nowrap}
+.conf .w{font-size:14.5px;color:var(--muted)}
+.conf .w b{color:var(--ink);font-weight:500}
+@media(max-width:560px){.conf-row{grid-template-columns:1fr;gap:4px}}
+
+/* ---------- contact ---------- */
+.contact{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:8px}
+.ccard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;min-width:0}
+.ccard .k{font-family:var(--data);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+.ccard .v{font-size:14px;word-break:break-word;display:grid;gap:5px}
+.copy{
+  margin-top:11px;font-family:var(--data);font-size:11px;padding:5px 11px;border-radius:5px;
+  border:1px solid var(--line);background:transparent;color:var(--accent);cursor:pointer;
+}
+.copy:hover{background:var(--accent-soft)}
+
+footer{
+  border-top:1px solid var(--line);background:var(--surface);
+  padding-block:26px;padding-inline:20px;
+}
+.foot-in{max-width:var(--maxw);margin:0 auto;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center}
+.foot-in p{font-size:12.5px;color:var(--muted)}
+
+/* ---------- reveal (resting state is visible) ---------- */
+.rv{opacity:1;transform:none;transition:opacity .62s ease,transform .62s cubic-bezier(.22,.7,.3,1)}
+.js .rv.pre{opacity:0;transform:translateY(16px)}
+@media (prefers-reduced-motion:reduce){
+  .js .rv.pre{opacity:1;transform:none}
+  *{animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
+</style>
+<style>
+html{color-scheme:light}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header class="rail">
+  <div class="rail-in">
+    <div class="brand">M. Y. Abd-Rabbou <span>· Quantum Information</span></div>
+    <nav id="nav">
+      <a href="#about">About</a>
+      <a href="#research">Research</a>
+      <a href="#positions">Positions</a>
+      <a href="#editorial">Editorial</a>
+      <a href="#publications">Publications</a>
+      <a href="#talks">Talks</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div class="hero-in">
+    <div class="eyebrow">Quantum Information &middot; Quantum Optics &middot; Open Systems</div>
+    <h1>Mahmoud Y. Abd-Rabbou<span class="ar" lang="ar">محمود محمد يوسف عبد ربه</span></h1>
+    <p class="role">Associate Professor of Mathematics, and postdoctoral researcher in quantum information theory.</p>
+    <div class="affil">
+      <div>Department of Mathematics, Faculty of Science, <b>Al-Azhar University</b>, Nasr City, Cairo, Egypt</div>
+      <div>School of Physics, <b>University of Chinese Academy of Sciences</b>, Yuquan Road, Beijing, China</div>
+    </div>
+    <div class="ids">
+      <a href="https://orcid.org/0000-0003-3197-4724" target="_blank" rel="noopener">ORCID 0000-0003-3197-4724</a>
+      <a href="https://www.scopus.com/authid/detail.uri?authorId=56398387100" target="_blank" rel="noopener">Scopus 56398387100</a>
+      <a href="https://www.webofscience.com/wos/author/record/KVB-5502-2024" target="_blank" rel="noopener">WoS KVB-5502-2024</a>
+      <a href="CV.pdf" target="_blank" rel="noopener">Curriculum Vitae (PDF)</a>
+    </div>
+  </div>
+</div>
+
+<div class="band">
+  <div class="band-in">
+    <div class="metric"><div class="n" id="npub" data-to="71">71</div><div class="l">Refereed papers</div><div class="s" id="span">2018 &ndash; 2026</div></div>
+    <div class="metric"><div class="n" data-to="18">0</div><div class="l">h-index</div><div class="s">16 Scopus &middot; 17 WoS</div></div>
+    <div class="metric"><div class="n" data-to="800">0</div><div class="l">Citations</div><div class="s">665 Scopus &middot; 712 WoS</div></div>
+    <div class="metric"><div class="n"><i>2</i></div><div class="l">Editorial boards</div><div class="s">Discover Physics &middot; Discover Quantum Science</div></div>
+  </div>
+</div>
+
+<section id="about" class="rv">
+  <div class="head"><span class="num">01</span><h2>About</h2></div>
+  <div class="prose">
+    <p>I work on how quantum systems hold, lose and transfer information. My research sits between quantum information theory, quantum optics and open-system dynamics, with recent work on quantum thermodynamic machines, quantum batteries, and information scrambling.</p>
+    <p>I completed my Ph.D. in quantum information at <strong>Al-Azhar University</strong> in 2020 under Prof. A.-S. F. Obada, and I have taught in its Department of Mathematics since 2014, as a lecturer since 2021. Since 2024 I have been a postdoctoral researcher at the <strong>School of Physics, University of Chinese Academy of Sciences</strong>, working with Prof. Cong-Feng Qiao.</p>
+    <p>A recent direction in my group applies machine learning to quantum state characterisation: stacked ensemble classifiers for entanglement detection in high-spin systems, and neural surrogate models that replace expensive statistical sampling of entanglement in light-matter systems.</p>
+  </div>
+</section>
+
+<section id="research" class="rv">
+  <div class="head"><span class="num">02</span><h2>Research interests</h2></div>
+  <div class="prose">
+    <p>The common thread is the behaviour of quantum correlations once a system is coupled to something it cannot control: a thermal bath, a classical noise field, an accelerating frame, or a curved spacetime.</p>
+  </div>
+  <div class="tags">
+    <span class="tag">Entanglement &amp; quantum steering</span>
+    <span class="tag">Entropic uncertainty relations</span>
+    <span class="tag">Open quantum systems and decoherence</span>
+    <span class="tag">Quantum thermodynamics &amp; Otto/Carnot cycles</span>
+    <span class="tag">Quantum batteries</span>
+    <span class="tag">Quantum information scrambling</span>
+    <span class="tag">Relativistic quantum information</span>
+    <span class="tag">Cavity QED &amp; atom-field interaction</span>
+    <span class="tag">Quantum Fisher information &amp; metrology</span>
+    <span class="tag">Magnomechanics &amp; optomechanics</span>
+    <span class="tag">Machine learning for quantum states</span>
+    <span class="tag">Quantum game theory</span>
+  </div>
+</section>
+
+<section id="positions" class="rv">
+  <div class="head"><span class="num">03</span><h2>Positions &amp; education</h2></div>
+  <div class="tl">
+    <div class="tl-row">
+      <div class="yr">2026 &mdash;</div>
+      <div><h3>Associate Professor of Mathematics<span class="now">Current</span></h3><div class="where">Faculty of Science, Al-Azhar University, Cairo, Egypt</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="yr">2024 &mdash;</div>
+      <div><h3>Postdoctoral Researcher<span class="now">Current</span></h3><div class="where">School of Physics, University of Chinese Academy of Sciences, Beijing, China</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="yr">2021 &ndash; 2026</div>
+      <div><h3>Lecturer in Mathematics</h3><div class="where">Faculty of Science, Al-Azhar University, Cairo, Egypt</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="yr">2018 &ndash; 2021</div>
+      <div><h3>Assistant Lecturer</h3><div class="where">Department of Mathematics, Al-Azhar University, Cairo, Egypt</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="yr">2014 &ndash; 2018</div>
+      <div><h3>Demonstrator in Applied Mathematics</h3><div class="where">Department of Mathematics, Al-Azhar University, Cairo, Egypt</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="yr">2013 &ndash; 2014</div>
+      <div><h3>Demonstrator</h3><div class="where">Modern Academy for Engineering &amp; Technology, Maadi, Cairo, Egypt</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="yr">2018 &ndash; 2020</div>
+      <div><h3>Ph.D. &mdash; Quantum Information</h3><div class="where">Al-Azhar University, Cairo, Egypt</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="yr">2014 &ndash; 2018</div>
+      <div><h3>M.Sc. &mdash; Quantum Optics</h3><div class="where">Al-Azhar University, Cairo, Egypt</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="yr">2009 &ndash; 2012</div>
+      <div><h3>B.Sc. &mdash; Applied Mathematics</h3><div class="where">Al-Azhar University, Cairo, Egypt</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="editorial" class="rv">
+  <div class="head"><span class="num">04</span><h2>Editorial service</h2></div>
+  <div class="prose">
+    <p>I serve on the editorial boards of two Springer Nature journals. Each entry links to the journal's editorial board page.</p>
+  </div>
+  <div class="boards">
+    <a class="board" href="https://link.springer.com/journal/44418/editorial-board" target="_blank" rel="noopener">
+      <div class="bname">Discover Physics</div>
+      <div class="brole">Editorial Board Member</div>
+      <div class="bpub">Springer Nature &middot; open access</div>
+      <span class="bgo">Editorial board &rarr;</span>
+    </a>
+    <a class="board" href="https://link.springer.com/journal/44464/editorial-board" target="_blank" rel="noopener">
+      <div class="bname">Discover Quantum Science</div>
+      <div class="brole">Editorial Board Member</div>
+      <div class="bpub">Springer Nature &middot; open access</div>
+      <span class="bgo">Editorial board &rarr;</span>
+    </a>
+  </div>
+  <div class="prose" style="margin-top:26px">
+    <p>I also referee for journals in quantum information, quantum optics and mathematical physics, including <strong>Quantum Information Processing</strong>, <strong>Annalen der Physik</strong>, <strong>Physica Scripta</strong> and <strong>International Journal of Theoretical Physics</strong>.</p>
+  </div>
+</section>
+
+<section id="publications" class="rv">
+  <div class="head"><span class="num">05</span><h2>Publications</h2></div>
+  <div class="pubtools">
+    <input id="q" type="search" placeholder="Search title, author, journal&hellip;" autocomplete="off">
+    <div class="years" id="years"></div>
+  </div>
+  <div class="count" id="count"></div>
+  <div class="pubs" id="pubs"></div>
+  <div class="sync" id="sync" hidden>
+    <h3>Indexed under my ORCID but not yet listed above</h3>
+    <div class="note">Read live from Crossref each time this page loads.</div>
+    <div class="list" id="synclist"></div>
+  </div>
+</section>
+
+<section id="talks" class="rv">
+  <div class="head"><span class="num">06</span><h2>Conferences</h2></div>
+  <div class="conf">
+    <div class="conf-row"><div class="d">Dec 2024</div><div class="w"><b>ICDABI</b>, 5th International Conference on Data Analytics for Business and Industry, Bahrain &mdash; two papers presented</div></div>
+    <div class="conf-row"><div class="d">Nov 2024</div><div class="w"><b>ICMA24</b>, 6th International Conference for Mathematics and Its Applications, Egypt &mdash; two papers presented</div></div>
+    <div class="conf-row"><div class="d">Mar 2023</div><div class="w"><b>ICMA23</b>, 5th International Conference on Mathematics and Its Applications, Egypt</div></div>
+    <div class="conf-row"><div class="d">Jun 2019</div><div class="w"><b>ICMSAO 2019</b>, 8th International Conference on Modeling, Simulation and Applied Optimization, Bahrain</div></div>
+    <div class="conf-row"><div class="d">Dec 2017</div><div class="w"><b>ICMTD17</b>, International Conference on Mathematics: Trends and Developments, Ain Shams University, Cairo</div></div>
+    <div class="conf-row"><div class="d">Mar 2017</div><div class="w"><b>9th International Conference for Basic Sciences</b>, Al-Azhar Conference Center, Cairo</div></div>
+    <div class="conf-row"><div class="d">Nov 2016</div><div class="w"><b>One-day Conference for Mathematics and Applications</b>, Al-Azhar University, Assiut Branch</div></div>
+    <div class="conf-row"><div class="d">Dec 2015</div><div class="w"><b>ICMA15</b>, International Conference for Mathematics and Applications, MSA University, Egypt</div></div>
+  </div>
+</section>
+
+<section id="skills" class="rv">
+  <div class="head"><span class="num">07</span><h2>Skills &amp; training</h2></div>
+  <div class="cols">
+    <div class="card">
+      <h3>Computation</h3>
+      <ul>
+        <li><b>Python</b> &mdash; NumPy, SciPy, QuTiP, Qiskit</li>
+        <li><b>Mathematica</b> &mdash; symbolic dynamics</li>
+        <li><b>MATLAB</b></li>
+        <li><b>LaTeX</b> &mdash; advanced</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Languages</h3>
+      <ul>
+        <li><b>Arabic</b> &mdash; native</li>
+        <li><b>English</b> &mdash; fluent, academic writing and presentation</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Research training</h3>
+      <ul>
+        <li>Nature Research Academies &mdash; Research Methodology (2022)</li>
+        <li>Nature Research Academies &mdash; Grant Writing (2022)</li>
+        <li>Nature Research Academies &mdash; Writing a Research Paper (2022)</li>
+        <li>Springer Nature &amp; EKB &mdash; Protocols and Methods; Open Access for Egypt (2022)</li>
+        <li>CABI &amp; EKB &mdash; Professional Responses to Reviewers (2022)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Teaching &amp; quality assurance</h3>
+      <ul>
+        <li>Curriculum maps and course descriptions (2023)</li>
+        <li>Self-study preparation (2023)</li>
+        <li>Scientific research design techniques (2023)</li>
+        <li>Examination and student assessment systems (2023)</li>
+        <li>Effective presentation skills (2023)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="rv">
+  <div class="head"><span class="num">08</span><h2>Contact</h2></div>
+  <div class="contact">
+    <div class="ccard">
+      <div class="k">Email</div>
+      <div class="v">
+        <span id="e1">m.elmalky@ucas.ac.cn</span>
+        <span id="e2">m.elmalky@azhar.edu.eg</span>
+      </div>
+      <button class="copy" data-copy="m.elmalky@ucas.ac.cn">Copy UCAS address</button>
+    </div>
+    <div class="ccard">
+      <div class="k">Beijing</div>
+      <div class="v"><span>School of Physics, UCAS</span><span>Yuquan Road 19A, Shijingshan</span><span>Beijing, China</span></div>
+    </div>
+    <div class="ccard">
+      <div class="k">Cairo</div>
+      <div class="v"><span>Department of Mathematics</span><span>Faculty of Science, Al-Azhar University</span><span>Nasr City 11884, Cairo, Egypt</span></div>
+    </div>
+    <div class="ccard">
+      <div class="k">References</div>
+      <div class="v"><span>Prof. A.-S. F. Obada &mdash; Al-Azhar University</span><span>Prof. Cong-Feng Qiao &mdash; UCAS, Beijing</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-in">
+    <p>Mahmoud Mohamed Youssef Abd-Rabbou &middot; Quantum information theory</p>
+    <p>Last updated October 2026</p>
+  </div>
+</footer>
+
+<script>
+document.documentElement.classList.add('js');
+
+/* ---------- publications ---------- */
+var P=[
+[2026,"M. Y. Abd-Rabbou, A. A. Zahia, A. M. Abdallah, C.-F. Qiao","Dynamical blockade in SU(1,1) quantum batteries via a neural network","Physical Review E 114, 034128","10.1103/9ryn-cccp"],
+[2026,"M. Y. Abd-Rabbou","Probing quantum scrambling and chaos in curved spacetime via Unruh-DeWitt detectors","Classical and Quantum Gravity 43, 165024","10.1088/1361-6382/ae9ae9"],
+[2026,"M. Y. Abd-Rabbou, I. Siddique, S. Haddadi, C.-F. Qiao","Scalable repeater architecture for long-range quantum energy teleportation in gapped systems","Physical Review A 114, 022601","10.1103/9mwm-b828"],
+[2026,"M. Y. Abd-Rabbou, A. A. Zahia, A. M. Abdallah, A. A. Gouda, C.-F. Qiao","Detecting entanglement in high-spin quantum systems via a stacking ensemble of machine learning models","Scientific Reports 16(1), 19181","10.1038/s41598-026-53789-6"],
+[2026,"M. Y. Abd-Rabbou, R. Altuijri, R. T. Matoog, A. H. Abdel-Aty","Floquet-engineered selective sideband control in driven two-qubit systems","Chaos, Solitons & Fractals 211, 118745","10.1016/j.chaos.2026.118745"],
+[2026,"M. A. EL-Sayed, M. Y. Abd-Rabbou, S. Esmail","Steady-state entanglement and steering in a hybrid exciton-optomechanical system","Brazilian Journal of Physics 56(4), 158","10.1007/s13538-026-02076-w"],
+[2026,"M. Y. Abd-Rabbou, A. M. Abdallah, I. Kedim, A.-B. A. Mohamed","A neural surrogate model for efficient statistical analysis of entanglement in light-matter systems","European Physical Journal Plus 141(7), 760","10.1140/epjp/s13360-026-07927-8"],
+[2026,"S. K. Singh, A. A. Zahia, J.-X. Peng, M. Y. Abd-Rabbou","Cavity magnomechanical framework for a highly efficient quantum battery","Annalen der Physik 538(6), e70225","10.1002/andp.70225"],
+[2026,"M. Y. Abd-Rabbou, A. N. Al-Ahmadi, H. Ardah, A. H. Abdel-Aty","Quantum information scrambling and entanglement generation in a Rydberg-dressed atom driven by tunable long-range interactions and quantum fluctuations","Chaos, Solitons & Fractals 207, 117995","10.1016/j.chaos.2026.117995"],
+[2026,"E. S. Elkhouly, M. Y. Abd-Rabbou, S. I. Ali, N. Metwally","Sharing a classical string utilizing quantum techniques","Quantum Information Processing 25(6), 190","10.1007/s11128-026-05213-1"],
+[2026,"A. T. M. Makram-Allah, M. Y. Abd-Rabbou, N. Metwally","The possibility of fairly mitigating penalties in the quantum Prisoner's Dilemma via classical noise channels","European Physical Journal Plus 141(4), 456","10.1140/epjp/s13360-026-07650-4"],
+[2026,"S. Elghaayda, M. Y. Abd-Rabbou, M. Mansour","Quantum obesity and steering ellipsoids for fermionic fields in a dilation black hole","Fortschritte der Physik 74(1), e70068","10.1002/prop.70068"],
+[2025,"L. Mashhor, M. Y. Abd-Rabbou, K. A. Dib, M. Abdel-Aty, A.-S. F. Obada","Quantum Otto engine powered by two-spin Heisenberg chain with Zeeman energy and symmetric cross spin","Journal of Physics B 58, 225501","10.1088/1361-6455/ae216b"],
+[2025,"M. Y. Abd-Rabbou, C.-F. Qiao","Strengthening the uncertainty and the reverse uncertainty relation limits","Quantum Information Processing 24(12), 387","10.1007/s11128-025-04992-3"],
+[2025,"E. Reda, M. Y. Abd-Rabbou, S. I. Ali, E. M. Khalil, A.-S. F. Obada","Unveiling quantum features of time-dependent electron spins influenced by Zeeman energy and symmetric cross spin","Journal of Physics B 58, 205501","10.1088/1361-6455/adf92b"],
+[2025,"A. A. Zahia, M. Y. Abd-Rabbou, E. M. Khalil, S. Al-Awfi","Optimizing quantum battery performance via multi-photon transitions: energy, power, work extraction, and stability","Journal of Taibah University for Science 19(1), 2565052","10.1080/16583655.2025.2565052"],
+[2025,"R. I. Mohamed, M. Y. Abd-Rabbou, N. Metwally","Fractional Rashba-induced quantum correlations and their role in achieving steerability in nanowires","Physica Scripta 100(10), 105111","10.1088/1402-4896/ae0c6c"],
+[2025,"F. Benabdallah, M. Y. Abd-Rabbou, M. Daoud","Non-Markovian protection and thermal fragility of quantum resources in a spin-1/2 Ising-Heisenberg diamond chain","Annalen der Physik 537(10), e00258","10.1002/andp.202500258"],
+[2025,"A. T. M. Makram-Allah, M. Y. Abd-Rabbou, N. Metwally","Implementing quantum prisoner dilemma via different classes of entangled and separable states","Modern Physics Letters A 40(27), 2550109","10.1142/S0217732325501093"],
+[2025,"M. Y. Abd-Rabbou, H. Allhibi, F. Aljuaydi, A.-B. A. Mohamed","Charging a quantum battery with interacting spin baths in a trio coherent state","Quantum Information Processing 24(8), 245","10.1007/s11128-025-04854-y"],
+[2025,"M. Y. Abd-Rabbou, A. A. Zahia, Atta ur Rahman, C.-F. Qiao","The limits of quantum information scrambling","Journal of Physics A 58(25), 255301","10.1088/1751-8121/ade1b9"],
+[2025,"S. Elghaayda, A. Ali, M. Y. Abd-Rabbou, M. Mansour, S. Al-Kuwari","Quantum correlations and metrological advantage among Unruh-DeWitt detectors in de Sitter spacetime","European Physical Journal C 85(4)","10.1140/epjc/s10052-025-14175-0"],
+[2025,"A. A. Zahia, M. Y. Abd-Rabbou, A. M. Megahed","Entanglement-driven energy exchange in a two-qubit quantum battery","Journal of Physics B 58(6), 065501","10.1088/1361-6455/adbc56"],
+[2025,"E. M. Khalil, A. A. Zahia, M. Y. Abd-Rabbou","Controlling entanglement and steering in a damped qubit-photon-magnon system under external field influence","Optical and Quantum Electronics 57(2), 164","10.1007/s11082-025-08048-9"],
+[2025,"E. S. Elkhouly, M. Y. Abd-Rabbou, S. I. Ali, N. Metwally","Quantum kernel as an indicator of secure classical message coded in a quantum string","Europhysics Letters 149(2), 28001","10.1209/0295-5075/ada576"],
+[2025,"L. Mashhor, M. Y. Abd-Rabbou, A.-A. A.-H. Yaya, M. Abdel-Aty, A.-S. F. Obada","Quantum Otto and Carnot thermal machines powered by two two-level atoms enveloped by QED-cavity","Indian Journal of Physics","10.1007/s12648-024-03507-7"],
+[2025,"F. Benabdallah, M. Y. Abd-Rabbou, M. Daoud, S. Haddadi","Quantum information resources in spin-1 Heisenberg dimer systems","Quantum Information Processing 24, 20","10.1007/s11128-024-04631-3"],
+[2025,"A. A. Zahia, M. Y. Abd-Rabbou, A. M. Megahed","Explicit and implicit quantum correlation dynamics of qubits interacting with thermal baths","Physica Scripta 100(2), 025101","10.1088/1402-4896/ada206"],
+[2024,"A. A. Zahia, M. Y. Abd-Rabbou, E. M. Khalil, S. Al-Awfi","Quantum battery systems: analyzing two-mode field charging, qubit interactions, and environmental influences","Thermal Science 28(6B), 5179","10.2298/TSCI2406179Z"],
+[2024,"E. M. Khalil, M. Y. Abd-Rabbou, H. Alotaibi, R. Althobaiti","External field-induced squeezing in a four-level atom inside a cavity system","Thermal Science 28(6B), 4855","10.2298/TSCI2406855K"],
+[2024,"E. S. Elkhouly, M. Y. Abd-Rabbou, S. I. Ali, N. Metwally","Distributing classical information via quantum secret sharing technique","ICDABI 2024, IEEE Xplore","10.1109/ICDABI63787.2024.10800213"],
+[2024,"A. T. M. Makram-Allah, M. Y. Abd-Rabbou, N. Metwally","Initial state time-dependent quantum game","ICDABI 2024, IEEE Xplore","10.1109/ICDABI63787.2024.10800664"],
+[2024,"A. T. M. Makram-Allah, M. Y. Abd-Rabbou, N. Metwally","Time dependence of Eisert-Wilkens-Lewenstein quantum game","Quantum Information Processing 23(12), 393","10.1007/s11128-024-04589-2"],
+[2024,"M. D. Alsulami, M. Y. Abd-Rabbou","Quantum heat engines with spin-chain-star systems","Annalen der Physik 536(10), 2400122","10.1002/andp.202400122"],
+[2024,"M. Y. Abd-Rabbou, E. M. Khalil, S. Al-Awfi","Quantum Otto machine in Lipkin-Meshkov-Glick model with magnetic field and a symmetric cross interaction","Optical and Quantum Electronics 56(6), 940","10.1007/s11082-024-06444-1"],
+[2024,"A.-S. F. Obada, M. Y. Abd-Rabbou, S. Haddadi","Does conditional entropy squeezing indicate normalized entropic uncertainty relation steering?","Quantum Information Processing 23(3), 90","10.1007/s11128-024-04298-w"],
+[2024,"M. Y. Abd-Rabbou, E. M. Khalil, S. Al-Awfi","Probing teleported quantum correlations in a two-qubit system inside a coherent field","Optik 296, 171551","10.1016/j.ijleo.2023.171551"],
+[2024,"E. Reda, M. Y. Abd-Rabbou, S. I. Ali, A.-S. F. Obada","Quantum correlations in Heisenberg chain model: effects of dipolar interaction, symmetric and anti-symmetric interactions","Modern Physics Letters A, 2450186","10.1142/S0217732324501864"],
+[2024,"S. Haddadi, M. A. Yurischev, M. Y. Abd-Rabbou, M. Azizi, M. R. Pourkarimi, M. Ghominejad","Quantumness near a Schwarzschild black hole","European Physical Journal C 84(1), 42","10.1140/epjc/s10052-024-12393-6"],
+[2024,"M. Y. Abd-Rabbou, E. M. Khalil, S. Al-Awfi","Noise-based damping of chaotic entanglement in pulsed driven two-qubit system","Annalen der Physik 536(3), 2300423","10.1002/andp.202300423"],
+[2023,"M. Y. Abd-Rabbou, Atta ur Rahman, M. A. Yurischev, S. Haddadi","Comparative study of quantum Otto and Carnot engines powered by a spin working substance","Physical Review E 108(3), 034106","10.1103/PhysRevE.108.034106"],
+[2023,"A. A. Zahia, M. Y. Abd-Rabbou, A. M. Megahed, A.-S. F. Obada","Bidirectional field-steering and atomic steering induced by a magnon mode in a qubit-photon system","Scientific Reports 13(1), 14943","10.1038/s41598-023-41907-7"],
+[2023,"A. B. Alruqi, E. M. Khalil, S. Abdel-Khalek, M. Y. Abd-Rabbou","Visualization of the interaction dynamics between a two-level atom and a graphene sheet covered by a laser field","Alexandria Engineering Journal 77, 309","10.1016/j.aej.2023.06.075"],
+[2023,"A. B. Alruqi, E. M. Khalil, S. Abdel-Khalek, M. Y. Abd-Rabbou","Entanglement of a cavity with a three-level atom and a graphene membrane in the presence of a laser field","Alexandria Engineering Journal 75, 419","10.1016/j.aej.2023.05.070"],
+[2023,"M. Y. Abd-Rabbou, M. Shamirzaie, S. Khan","Non-classical correlations of accelerated observers interacting with a classical stochastic noise beyond the single mode approximation","Optical and Quantum Electronics 55, 175","10.1007/s11082-023-04926-2"],
+[2023,"M. Y. Abd-Rabbou, S. S. Hansen","Protecting the fidelity of a pulsed-driven harmonic oscillator","Optik 286, 170985","10.1016/j.ijleo.2023.170985"],
+[2023,"M. Youssef, S. I. Ali, M. Y. Abd-Rabbou, A.-S. F. Obada","Exploring quantum correlations of two-qubit Heisenberg chain model influenced by magnetic dipole-dipole, magnetic field, and a symmetric cross interaction","Quantum Information Processing 22, 229","10.1007/s11128-023-03969-4"],
+[2023,"N. I. Mohammed, H. M. Abdelsalam, S. Almalki, M. Y. Abd-Rabbou, S. Abdel-Khalek, E. M. Khalil","Witnessing quantum correlations in two coupled quantum dots under intrinsic decoherence","Alexandria Engineering Journal 69, 521","10.1016/j.aej.2023.01.057"],
+[2023,"Atta ur Rahman, M. Y. Abd-Rabbou, S. Haddadi, H. Ali","Two-qubit steerability, nonlocality, and average steered coherence under classical dephasing channels","Annalen der Physik 535(4), 2200523","10.1002/andp.202200523"],
+[2023,"M. Y. Abd-Rabbou, S. I. Ali, N. Metwally","Detraction of decoherence that arises from the acceleration process","Journal of the Optical Society of America B 40(3), 585","10.1364/JOSAB.477867"],
+[2023,"Atta ur Rahman, M. Shamirzaie, M. Y. Abd-Rabbou","Bidirectional steering, entanglement and coherence of accelerated qubit-qutrit system with a stochastic noise","Optik 274, 170543","10.1016/j.ijleo.2023.170543"],
+[2022,"M. F. Alotaibi, E. M. Khalil, M. Y. Abd-Rabbou, M. Marin","The classicality and quantumness of the driven qubit-photon-magnon system","Mathematics 10(23), 4458","10.3390/math10234458"],
+[2022,"M. Y. Abd-Rabbou, N. Metwally, M. M. A. Ahmed, A.-S. F. Obada","Decoherence and quantum steering of accelerated qubit-qutrit system","Quantum Information Processing 21, 363","10.1007/s11128-022-03711-6"],
+[2022,"E. M. Khalil, M. Y. Abd-Rabbou","Robustness of a teleported state influenced by dipole interaction and magnetic field under intrinsic decoherence","Optik 267, 169703","10.1016/j.ijleo.2022.169703"],
+[2022,"M. Y. Abd-Rabbou, N. Metwally, M. M. A. Ahmed, A.-S. F. Obada","Improving the bidirectional steerability between two accelerated partners via filtering process","Modern Physics Letters A 37, 2250143","10.1142/S0217732322501437"],
+[2022,"Atta ur Rahman, M. Y. Abd-Rabbou, S. M. Zangi, M. Javed","Entropic uncertainty and quantum correlations dynamics in a system of two qutrits exposed to local noisy channels","Physica Scripta 97, 105101","10.1088/1402-4896/ac8bb1"],
+[2022,"M. Y. Abd-Rabbou, E. M. Khalil, F. Almalki","Dynamical features of isolated two- and three-level atoms interacting with a cavity field","Advances in Mathematical Physics 2022, 5258035","10.1155/2022/5258035"],
+[2022,"M. Y. Abd-Rabbou, E. M. Khalil","Dense coding and quantum memory assisted entropic uncertainty relations in a two-qubit state influenced by dipole and symmetric cross interactions","Annalen der Physik 534, 2200204","10.1002/andp.202200204"],
+[2022,"M. Y. Abd-Rabbou, S. Khan, M. Shamirzaie","Quantum Fisher information and quantum coherence of an entangled bipartite state interacting with a common classical environment in accelerating frames","Quantum Information Processing 21, 218","10.1007/s11128-022-03560-3"],
+[2022,"M. F. Alotaibi, E. M. Khalil, M. Y. Abd-Rabbou, M. Omri","Dynamics of an atomic system associated with a cavity-optomechanical system","Results in Physics 37, 105540","10.1016/j.rinp.2022.105540"],
+[2022,"E. M. Khalil, H. Abu-Zinadah, M. Y. Abd-Rabbou","Influence of an external classical field on a four-level atom inside a quantized field","Symmetry 14(4), 811","10.3390/sym14040811"],
+[2022,"M. Omri, M. Y. Abd-Rabbou, E. M. Khalil, S. Abdel-Khalek","Thermal information and teleportation in two-qutrit Heisenberg XX chain model","Alexandria Engineering Journal 61(10), 8335","10.1016/j.aej.2022.01.051"],
+[2022,"M. Y. Abd-Rabbou, S. I. Ali, M. M. A. Ahmed","Enhancing the information of nonlinear SU(1,1) quantum systems interacting with a two-level atom","Optical and Quantum Electronics 54, 548","10.1007/s11082-022-03936-w"],
+[2021,"M. F. Alotaibi, E. M. Khalil, S. Abdel-Khalek, M. Y. Abd-Rabbou, M. Omri","Effects of the vibrating graphene membrane and the driven classical field on an atomic system coupled to a cavity field","Results in Physics 31, 105012","10.1016/j.rinp.2021.105012"],
+[2021,"A.-B. A. Mohamed, E. M. Khalil, M. Y. Abd-Rabbou","Nonclassical atomic system dynamics time-dependently interacts with finite entangled pair coherent parametric converter cavity fields","Optical and Quantum Electronics 53, 344","10.1007/s11082-021-02910-2"],
+[2021,"A.-B. A. Mohamed, E. M. Khalil, M. Y. Abd-Rabbou","Quantum effects induced by two classical fields in a coherent cavity field containing two two-level atoms","Physica E 134, 114839","10.1016/j.physe.2021.114839"],
+[2021,"D. A. M. Abo-Kahla, M. Y. Abd-Rabbou, N. Metwally","The orthogonality speed of two-qubit state interacts locally with spin chain in the presence of Dzyaloshinsky-Moriya interaction","Laser Physics Letters 18(4), 045203","10.1088/1612-202X/abe7de"],
+[2021,"M. Y. Abd-Rabbou, E. M. Khalil, S. Abdel-Khalek, A. Al-Barakaty, H. Abu-Zinadah","Quantum Fisher information of a teleported state in Heisenberg XYZ chain with magnetic field and Kaplan-Shekhtman-Entin-Wohlman-Aharony interaction","IEEE Access 9, 51325","10.1109/ACCESS.2021.3069163"],
+[2020,"M. Y. Abd-Rabbou, N. Metwally, M. M. A. Ahmed, A.-S. F. Obada","Wigner distribution of accelerated tripartite W-state","Optik 208, 163921","10.1016/j.ijleo.2019.163921"],
+[2019,"M. Y. Abd-Rabbou, N. Metwally, M. M. A. Ahmed, A.-S. F. Obada","Suppressing the information losses of accelerated qubit-qutrit system","International Journal of Quantum Information 17(4), 1950032","10.1142/S0219749919500321"],
+[2019,"M. Y. Abd-Rabbou, N. Metwally, M. M. A. Ahmed, A.-S. F. Obada","Wigner function of noisy accelerated two-qubit system","Quantum Information Processing 18(12), 367","10.1007/s11128-019-2480-6"],
+[2019,"M. Y. Abd-Rabbou, N. Metwally, M. M. A. Ahmed, A.-S. F. Obada","Restraining the decoherence of accelerated qubit-qutrit system via local Markovian channels","Physica Scripta 94(10), 105103","10.1088/1402-4896/ab2427"],
+[2019,"M. Y. Abd-Rabbou, E. M. Khalil, M. M. A. Ahmed, A.-S. F. Obada","External classical field and damping effects on a moving two-level atom in a cavity field interaction with Kerr-like medium","International Journal of Theoretical Physics 58(12), 4012","10.1007/s10773-019-04268-4"],
+[2019,"N. Metwally, M. Y. Abd-Rabbou, M. M. A. Ahmed, A.-S. F. Obada","Wigner function of accelerated and non-accelerated Greenberger-Horne-Zeilinger state","ICMSAO 2019, IEEE Xplore","10.1109/ICMSAO.2019.8880342"],
+[2018,"A.-S. F. Obada, M. M. A. Ahmed, E. M. Khalil, M. Y. Abd-Rabbou","Influence of an external classical field on the interaction between a field and an atom in presence of intrinsic damping","International Journal of Theoretical Physics 57(9), 2787","10.1007/s10773-018-3799-y"]
+];
+
+var years=[];
+P.forEach(function(p){ if(years.indexOf(p[0])<0) years.push(p[0]); });
+years.sort(function(a,b){return b-a;});
+
+/* paper count and year span come from the data, never typed by hand */
+(function(){
+  var n=document.getElementById('npub');
+  if(n){ n.setAttribute('data-to',String(P.length)); n.textContent=String(P.length); }
+  var sp=document.getElementById('span');
+  if(sp){ sp.innerHTML=years[years.length-1]+' &ndash; '+years[0]; }
+})();
+
+var state={y:"all",q:""};
+var yearsEl=document.getElementById('years');
+var pubsEl=document.getElementById('pubs');
+var countEl=document.getElementById('count');
+
+function chip(label,val){
+  var b=document.createElement('button');
+  b.className='yb'+(val===state.y?' on':'');
+  b.textContent=label;
+  b.setAttribute('type','button');
+  b.onclick=function(){ state.y=val; draw(); };
+  yearsEl.appendChild(b);
+}
+function buildChips(){
+  yearsEl.innerHTML='';
+  chip('All','all');
+  years.forEach(function(y){ chip(String(y),y); });
+}
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function mark(a){ return esc(a).replace(/M\. Y\. Abd-Rabbou/g,'<b>M. Y. Abd-Rabbou</b>'); }
+
+function draw(){
+  buildChips();
+  var q=state.q.toLowerCase();
+  var rows=P.filter(function(p){
+    if(state.y!=='all' && p[0]!==state.y) return false;
+    if(!q) return true;
+    return (p[1]+' '+p[2]+' '+p[3]).toLowerCase().indexOf(q)>=0;
+  });
+  countEl.textContent=rows.length+' of '+P.length+' refereed papers';
+  if(!rows.length){ pubsEl.innerHTML='<div class="empty">No paper matches that search.</div>'; return; }
+  var total=P.length;
+  var html=rows.map(function(p){
+    var n=total-P.indexOf(p);
+    return '<article class="pub">'+
+      '<div class="idx">'+n+'</div>'+
+      '<div><div class="t">'+esc(p[2])+'</div>'+
+      '<div class="au">'+mark(p[1])+'</div>'+
+      '<div class="meta"><span class="y">'+p[0]+'</span><span class="j">'+esc(p[3])+'</span>'+
+      '<a class="doi" href="https://doi.org/'+p[4]+'" target="_blank" rel="noopener">DOI</a></div></div></article>';
+  }).join('');
+  pubsEl.innerHTML=html;
+}
+document.getElementById('q').addEventListener('input',function(e){ state.q=e.target.value; draw(); });
+draw();
+
+/* ---------- counters ---------- */
+function runCounters(){
+  document.querySelectorAll('.metric .n[data-to]').forEach(function(el){
+    var to=parseInt(el.getAttribute('data-to'),10), t0=null, dur=1100;
+    function step(ts){
+      if(t0===null) t0=ts;
+      var k=Math.min(1,(ts-t0)/dur), e=1-Math.pow(1-k,3);
+      el.textContent=Math.round(to*e)+(k===1&&to===800?'+':'');
+      if(k<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+}
+if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  document.querySelectorAll('.metric .n[data-to]').forEach(function(el){
+    el.textContent=el.getAttribute('data-to')+(el.getAttribute('data-to')==='800'?'+':'');
+  });
+}else{ runCounters(); }
+
+/* ---------- scroll reveal, resting state visible ---------- */
+if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window){
+  var rv=[].slice.call(document.querySelectorAll('.rv'));
+  rv.forEach(function(el){
+    var r=el.getBoundingClientRect();
+    if(r.top > window.innerHeight * 0.95) el.classList.add('pre');
+  });
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.remove('pre'); io.unobserve(e.target); } });
+  },{rootMargin:'0px 0px -8% 0px'});
+  rv.forEach(function(el){ io.observe(el); });
+}
+
+/* ---------- nav highlight ---------- */
+var links=[].slice.call(document.querySelectorAll('#nav a'));
+var secs=links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+if('IntersectionObserver' in window){
+  var nio=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(!e.isIntersecting) return;
+      links.forEach(function(a){ a.classList.toggle('on', a.getAttribute('href')==='#'+e.target.id); });
+    });
+  },{rootMargin:'-45% 0px -50% 0px'});
+  secs.forEach(function(s){ if(s) nio.observe(s); });
+}
+
+/* ---------- copy ---------- */
+document.querySelectorAll('.copy').forEach(function(b){
+  b.addEventListener('click',function(){
+    var v=b.getAttribute('data-copy'), old=b.textContent;
+    function ok(){ b.textContent='Copied'; setTimeout(function(){ b.textContent=old; },1600); }
+    function fallback(){
+      var el=document.getElementById('e1'), r=document.createRange();
+      r.selectNodeContents(el); var s=window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      b.textContent='Selected — press copy'; setTimeout(function(){ b.textContent=old; },2200);
+    }
+    try{
+      if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(v).then(ok,fallback); }
+      else fallback();
+    }catch(e){ fallback(); }
+  });
+});
+
+/* ---------- live check against Crossref, keyed on my ORCID ---------- */
+(function(){
+  var box=document.getElementById('sync'), list=document.getElementById('synclist');
+  if(!box||!list||!window.fetch) return;
+  var have={};
+  P.forEach(function(p){ have[p[4].toLowerCase()]=1; });
+  /* preprint servers: the published version is what belongs in the list */
+  var skip=/^10\.(21203|2139|48550|20944)\//;
+  var url='https://api.crossref.org/works?filter=orcid:http://orcid.org/0000-0003-3197-4724'+
+          '&rows=200&select=DOI,title,container-title,issued';
+  fetch(url).then(function(r){ return r.ok?r.json():null; }).then(function(d){
+    if(!d||!d.message||!d.message.items) return;
+    var miss=d.message.items.filter(function(it){
+      var doi=(it.DOI||'').toLowerCase();
+      if(!doi||have[doi]||skip.test(doi)) return false;
+      return it['container-title'] && it['container-title'].length;
+    });
+    if(!miss.length) return;
+    miss.sort(function(a,b){
+      var ya=(a.issued&&a.issued['date-parts']&&a.issued['date-parts'][0][0])||0;
+      var yb=(b.issued&&b.issued['date-parts']&&b.issued['date-parts'][0][0])||0;
+      return yb-ya;
+    });
+    list.innerHTML=miss.slice(0,12).map(function(it){
+      var y=(it.issued&&it.issued['date-parts']&&it.issued['date-parts'][0][0])||'';
+      var t=(it.title&&it.title[0])||'Untitled';
+      var j=(it['container-title']&&it['container-title'][0])||'';
+      return '<div class="row"><div class="rt">'+esc(t)+'</div>'+
+             '<div class="rm">'+esc(j)+(y?', '+y:'')+' &middot; '+
+             '<a href="https://doi.org/'+it.DOI+'" target="_blank" rel="noopener">DOI</a></div></div>';
+    }).join('');
+    box.hidden=false;
+  }).catch(function(){ /* offline or blocked: the curated list above still stands */ });
+})();
+
+/* ---------- hero: Wigner function of an even coherent-state superposition,
+     rotating under free harmonic evolution. Blue is positive, teal is the
+     negative interference region between the two lobes. ---------- */
+(function(){
+  var c=document.getElementById('field');
+  if(!c) return;
+  var ctx=c.getContext('2d');
+  var W=0,H=0,gw=0,gh=0,img=null,buf=null,off=null;
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var POS={r:43,g:69,b:200};     /* W > 0 */
+  var NEG={r:12,g:140,b:140};    /* W < 0, the non-classical part */
+
+  var x0=1.85;                   /* lobe separation in phase space */
+  var SPAN=4.2;                  /* half-width of the plotted window */
+
+  function size(){
+    var rect=c.getBoundingClientRect();
+    W=Math.max(1,Math.round(rect.width)); H=Math.max(1,Math.round(rect.height));
+    c.width=W; c.height=H;
+    gw=Math.max(48,Math.round(W/7)); gh=Math.max(28,Math.round(H/7));
+    img=ctx.createImageData(gw,gh); buf=img.data;
+    off=document.createElement('canvas'); off.width=gw; off.height=gh;
+  }
+
+  function frame(t){
+    if(!img) return;
+    var th=t*0.00019;
+    var ct=Math.cos(th), st=Math.sin(th);
+    var ar=(gw/gh);
+    for(var j=0;j<gh;j++){
+      var p=((j/(gh-1))*2-1)*SPAN;
+      for(var i=0;i<gw;i++){
+        var x=((i/(gw-1))*2-1)*SPAN*ar;
+        /* free evolution rotates the quasi-probability in phase space */
+        var xr= x*ct + p*st;
+        var pr=-x*st + p*ct;
+        var g=Math.exp(-pr*pr);
+        var w = Math.exp(-(xr-x0)*(xr-x0))*g
+              + Math.exp(-(xr+x0)*(xr+x0))*g
+              + 2*Math.exp(-xr*xr)*g*Math.cos(2*x0*pr);
+        w/=2;
+        var m=Math.min(1,Math.abs(w));
+        var col = w>=0 ? POS : NEG;
+        var o=(j*gw+i)*4;
+        buf[o]=col.r; buf[o+1]=col.g; buf[o+2]=col.b;
+        buf[o+3]=Math.pow(m,0.85)*225;
+      }
+    }
+    off.getContext('2d').putImageData(img,0,0);
+    ctx.clearRect(0,0,W,H);
+    ctx.imageSmoothingEnabled=true;
+    ctx.imageSmoothingQuality='high';
+    ctx.drawImage(off,0,0,gw,gh,0,0,W,H);
+  }
+
+  var raf=null;
+  function loop(ts){ frame(ts); raf=requestAnimationFrame(loop); }
+  function start(){
+    if(raf) cancelAnimationFrame(raf);
+    if(reduce){ frame(2600); } else { raf=requestAnimationFrame(loop); }
+  }
+
+  size(); frame(2600); start();
+  var rt=null;
+  window.addEventListener('resize',function(){
+    clearTimeout(rt); rt=setTimeout(function(){ size(); frame(performance.now()); },140);
+  });
+  document.addEventListener('visibilitychange',function(){
+    if(document.hidden){ if(raf){ cancelAnimationFrame(raf); raf=null; } }
+    else start();
+  });
+})();
+</script>
+</body>
+</html>
