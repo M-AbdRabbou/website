@@ -187,7 +187,8 @@ section+section{border-top:1px solid var(--line)}
 .aboutgrid{display:grid;grid-template-columns:232px 1fr;gap:38px;align-items:start}
 .portrait{margin:0;min-width:0}
 .portrait img{
-  display:block;width:100%;height:auto;border-radius:12px;
+  display:block;width:100%;height:auto;aspect-ratio:520/669;object-fit:cover;
+  background:var(--surface-2);border-radius:12px;
   border:1.5px solid var(--line);
   box-shadow:0 14px 34px -18px rgba(10,15,28,.5);
 }
@@ -364,7 +365,7 @@ img{max-width:100%}
   <div class="head"><span class="num">01</span><h2>About</h2></div>
   <div class="aboutgrid">
   <figure class="portrait">
-    <img src="portrait.jpg" width="520" height="669" alt="Mahmoud Y. Abd-Rabbou" loading="lazy">
+    <img src="portrait.jpg" width="520" height="669" alt="Mahmoud Y. Abd-Rabbou" decoding="async">
   </figure>
   <div class="prose">
     <p>I work on how quantum systems hold, lose and transfer information. My research sits between quantum information theory, quantum optics and open-system dynamics, with recent work on quantum thermodynamic machines, quantum batteries, and information scrambling.</p>
