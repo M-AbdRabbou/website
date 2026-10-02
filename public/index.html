@@ -71,7 +71,7 @@ a:hover{text-decoration:underline}
 
 /* ---------- hero ---------- */
 .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
-#field{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+#field{position:absolute;inset:0;width:100%;height:100%;opacity:.42}
 .hero-in{
   position:relative;max-width:var(--maxw);margin:0 auto;
   padding-block:clamp(46px,8vw,86px);padding-inline:20px;
@@ -762,14 +762,14 @@ document.querySelectorAll('.copy').forEach(function(b){
   var POS={r:43,g:69,b:200};     /* W > 0 */
   var NEG={r:12,g:140,b:140};    /* W < 0, the non-classical part */
 
-  var x0=1.85;                   /* lobe separation in phase space */
-  var SPAN=4.2;                  /* half-width of the plotted window */
+  var x0=2.35;                   /* lobe separation: wider, so the fringes resolve */
+  var SPAN=4.6;                  /* half-width of the plotted window */
 
   function size(){
     var rect=c.getBoundingClientRect();
     W=Math.max(1,Math.round(rect.width)); H=Math.max(1,Math.round(rect.height));
     c.width=W; c.height=H;
-    gw=Math.max(48,Math.round(W/7)); gh=Math.max(28,Math.round(H/7));
+    gw=Math.max(110,Math.round(W/3)); gh=Math.max(70,Math.round(H/3));
     img=ctx.createImageData(gw,gh); buf=img.data;
     off=document.createElement('canvas'); off.width=gw; off.height=gh;
   }
@@ -795,7 +795,8 @@ document.querySelectorAll('.copy').forEach(function(b){
         var col = w>=0 ? POS : NEG;
         var o=(j*gw+i)*4;
         buf[o]=col.r; buf[o+1]=col.g; buf[o+2]=col.b;
-        buf[o+3]=Math.pow(m,0.85)*225;
+        /* a low exponent lifts the faint fringes instead of crushing them to nothing */
+        buf[o+3]=Math.pow(m,0.5)*255;
       }
     }
     off.getContext('2d').putImageData(img,0,0);
