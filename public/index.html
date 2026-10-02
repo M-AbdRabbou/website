@@ -71,7 +71,7 @@ a:hover{text-decoration:underline}
 
 /* ---------- hero ---------- */
 .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
-#field{position:absolute;inset:0;width:100%;height:100%;opacity:.55}
+#field{position:absolute;inset:0;width:100%;height:100%;opacity:.95}
 .hero-in{
   position:relative;max-width:var(--maxw);margin:0 auto;
   padding-block:clamp(52px,8vw,104px);padding-inline:20px;
@@ -830,15 +830,22 @@ document.querySelectorAll('.copy').forEach(function(b){
       for(var b=b0; b!==bEnd; b+=bi){
         var k00=a*(N+1)+b, k10=(a+1)*(N+1)+b, k11=(a+1)*(N+1)+b+1, k01=a*(N+1)+b+1;
         var z=(Z[k00]+Z[k10]+Z[k11]+Z[k01])*0.25;
-        var m=Math.min(1,Math.abs(z)/0.72);
-        if(m<0.012) continue;
+        var t=Math.max(-1,Math.min(1,z/0.70));
+        var m=Math.abs(t);
+        if(m<0.02) continue;
         /* slope along x gives a cheap directional shade */
-        var sl=(Z[k10]-Z[k00])*1.6;
-        var sh=Math.max(0.45,Math.min(1.35,1+sl));
-        var R,G,B;
-        if(z>=0){ R=43; G=69; B=200; } else { R=12; G=150; B=146; }
-        R=Math.min(255,R*sh+28); G=Math.min(255,G*sh+28); B=Math.min(255,B*sh+18);
-        var al=Math.pow(m,0.62)*0.80;
+        var sl=(Z[k10]-Z[k00])*1.5;
+        var sh=Math.max(0.62,Math.min(1.28,1+sl));
+        var R,G,B,u;
+        if(t>=0){                       /* positive lobes: periwinkle to deep indigo */
+          u=m;
+          R=146-(146-55)*u; G=160-(160-42)*u; B=252-(252-190)*u;
+        }else{                          /* negative trough: aqua to deep teal */
+          u=m;
+          R=103-(103-9)*u; G=232-(232-118)*u; B=219-(219-115)*u;
+        }
+        R=Math.max(0,Math.min(255,R*sh)); G=Math.max(0,Math.min(255,G*sh)); B=Math.max(0,Math.min(255,B*sh));
+        var al=Math.min(1,Math.pow(m,0.45)*1.15);
         ctx.fillStyle='rgba('+(R|0)+','+(G|0)+','+(B|0)+','+al.toFixed(3)+')';
         ctx.beginPath();
         ctx.moveTo(sx[k00],sy[k00]);
@@ -847,7 +854,7 @@ document.querySelectorAll('.copy').forEach(function(b){
         ctx.lineTo(sx[k01],sy[k01]);
         ctx.closePath();
         ctx.fill();
-        ctx.strokeStyle='rgba('+(R*0.72|0)+','+(G*0.72|0)+','+(B*0.72|0)+','+(al*0.55).toFixed(3)+')';
+        ctx.strokeStyle='rgba('+(R*0.62|0)+','+(G*0.62|0)+','+(B*0.62|0)+','+(al*0.42).toFixed(3)+')';
         ctx.stroke();
       }
     }
