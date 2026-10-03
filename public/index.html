@@ -106,7 +106,6 @@ a:hover{text-decoration:underline}
 .band-in{
   max-width:var(--maxw);margin:0 auto;padding-inline:20px;padding-block:26px;
   display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
-  padding-bottom:18px;
 }
 .band{border-top:3px solid var(--ink)}
 .metric .n{
@@ -118,11 +117,6 @@ a:hover{text-decoration:underline}
 .metric .l{font-family:var(--data);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);margin-top:12px}
 .metric .s{font-size:12px;color:var(--muted);margin-top:3px}
 @media(max-width:680px){.band-in{grid-template-columns:repeat(2,1fr);gap:24px 16px}}
-
-.asof{
-  max-width:var(--maxw);margin:0 auto;padding-inline:20px;padding-bottom:22px;
-  font-size:12.5px;color:var(--muted);
-}
 
 /* ---------- sections ---------- */
 section{max-width:var(--maxw);margin:0 auto;padding-inline:20px;padding-block:clamp(44px,6vw,72px)}
@@ -212,7 +206,7 @@ section+section{border-top:1px solid var(--line)}
 }
 
 /* ---------- editorial boards ---------- */
-.boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.boards{margin-top:4px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
 .board{
   display:block;background:var(--surface);border:1px solid var(--line);border-radius:10px;
   padding:22px;min-width:0;color:var(--ink);
@@ -229,10 +223,10 @@ section+section{border-top:1px solid var(--line)}
 
 .subhead{
   font-family:var(--data);font-size:12px;font-weight:600;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--spectral);margin:40px 0 14px;
+  text-transform:uppercase;color:var(--spectral);margin:42px 0 16px;
   padding-top:22px;border-top:1px solid var(--line);
 }
-.revgrid{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}
+.revgrid{display:flex;flex-wrap:wrap;gap:9px;margin-top:4px}
 .rev{
   display:inline-flex;align-items:center;gap:9px;font-size:13.5px;
   background:var(--surface);border:1.5px solid var(--line);border-radius:7px;
@@ -373,7 +367,6 @@ img{max-width:100%}
     <div class="metric"><div class="n" data-to="880">880</div><div class="l">Citations</div><div class="s">774 WoS &middot; 718 Scopus</div></div>
     <div class="metric"><div class="n"><i>2</i></div><div class="l">Editorial boards</div><div class="s">Discover Physics &middot; Discover Quantum Science</div></div>
   </div>
-  <p class="asof">Headline figures are from Google Scholar. Web of Science and Scopus figures are given beneath them. All checked October 2026.</p>
 </div>
 
 <section id="about" class="rv">
@@ -392,9 +385,6 @@ img{max-width:100%}
 
 <section id="research" class="rv">
   <div class="head"><span class="num">02</span><h2>Research interests</h2></div>
-  <div class="prose">
-    <p>The common thread is the behaviour of quantum correlations once a system is coupled to something it cannot control: a thermal bath, a classical noise field, an accelerating frame, or a curved spacetime.</p>
-  </div>
   <div class="tags">
     <span class="tag">Entanglement and its measures</span>
     <span class="tag">EPR steering and Bell nonlocality</span>
@@ -481,9 +471,6 @@ img{max-width:100%}
 
 <section id="editorial" class="rv">
   <div class="head"><span class="num">05</span><h2>Editorial service</h2></div>
-  <div class="prose">
-    <p>I serve on the editorial boards of two Springer Nature journals. Each entry links to the journal's editorial board page.</p>
-  </div>
   <div class="boards">
     <a class="board" href="https://link.springer.com/journal/44418/editorial-board" target="_blank" rel="noopener">
       <div class="bname">Discover Physics</div>
@@ -498,18 +485,12 @@ img{max-width:100%}
       <span class="bgo">Editorial board &rarr;</span>
     </a>
   </div>
-  <h3 class="subhead">Peer review</h3>
-  <div class="prose">
-    <p id="revnote">Read live from my ORCID record. The count after each title is the number of manuscripts refereed.</p>
-  </div>
-  <div class="revgrid" id="revgrid"><span class="rev"><b>Loading from ORCID</b></span></div>
+  <h3 class="subhead" id="revhead">Peer review</h3>
+  <div class="revgrid" id="revgrid"></div>
 </section>
 
 <section id="publications" class="rv">
   <div class="head"><span class="num">06</span><h2>Publications</h2></div>
-  <div class="prose" style="margin-bottom:24px">
-    <p>A green PDF button marks a paper whose full text is free to read, either at the publisher or on arXiv. The rest are behind the publisher's paywall and are reachable through their DOI.</p>
-  </div>
   <div class="pubtools">
     <input id="q" type="search" placeholder="Search title, author, journal&hellip;" autocomplete="off">
   </div>
@@ -888,7 +869,7 @@ document.querySelectorAll('.copy').forEach(function(b){
 
 /* ---------- peer-review record, read live from ORCID ---------- */
 (function(){
-  var grid=document.getElementById('revgrid'), note=document.getElementById('revnote');
+  var grid=document.getElementById('revgrid');
   if(!grid||!window.fetch) return;
 
   /* ISSNs already seen, so the common case needs no extra lookups */
@@ -906,13 +887,11 @@ document.querySelectorAll('.copy').forEach(function(b){
     '2076-3417':'Applied Sciences'
   };
 
-  function render(rows,total,n){
+  function render(rows){
     grid.innerHTML=rows.map(function(r){
       return '<span class="rev"><b>'+r.name.replace(/&/g,'&amp;').replace(/</g,'&lt;')+
              '</b><i>'+r.n+'</i></span>';
     }).join('');
-    if(note) note.textContent=total+' reviews across '+n+
-      ' journals, read live from my ORCID record. The count after each title is the number of manuscripts refereed.';
   }
 
   fetch('https://pub.orcid.org/v3.0/0000-0003-3197-4724/peer-reviews',
@@ -935,7 +914,9 @@ document.querySelectorAll('.copy').forEach(function(b){
     if(!rows.length) return;
     rows.sort(function(a,b){ return b.n-a.n || a.name.localeCompare(b.name); });
     var total=rows.reduce(function(a,b){ return a+b.n; },0);
-    render(rows,total,rows.length);
+    var head=document.getElementById('revhead');
+    if(head) head.textContent='Peer review \u00b7 '+total+' reviews, '+rows.length+' journals';
+    render(rows);
 
     /* resolve any journal the page has not seen before */
     if(unknown.length && unknown.length<=8){
@@ -946,12 +927,11 @@ document.querySelectorAll('.copy').forEach(function(b){
           .catch(function(){});
       })).then(function(){
         rows.sort(function(a,b){ return b.n-a.n || a.name.localeCompare(b.name); });
-        render(rows,total,rows.length);
+        render(rows);
       });
     }
   })
   .catch(function(){
-    if(note) note.textContent='The peer-review record is kept on my ORCID profile.';
   });
 })();
 
