@@ -106,6 +106,7 @@ a:hover{text-decoration:underline}
 .band-in{
   max-width:var(--maxw);margin:0 auto;padding-inline:20px;padding-block:26px;
   display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+  padding-bottom:18px;
 }
 .band{border-top:3px solid var(--ink)}
 .metric .n{
@@ -117,6 +118,11 @@ a:hover{text-decoration:underline}
 .metric .l{font-family:var(--data);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);margin-top:12px}
 .metric .s{font-size:12px;color:var(--muted);margin-top:3px}
 @media(max-width:680px){.band-in{grid-template-columns:repeat(2,1fr);gap:24px 16px}}
+
+.asof{
+  max-width:var(--maxw);margin:0 auto;padding-inline:20px;padding-bottom:22px;
+  font-size:12.5px;color:var(--muted);
+}
 
 /* ---------- sections ---------- */
 section{max-width:var(--maxw);margin:0 auto;padding-inline:20px;padding-block:clamp(44px,6vw,72px)}
@@ -363,10 +369,11 @@ img{max-width:100%}
 <div class="band">
   <div class="band-in">
     <div class="metric"><div class="n" id="npub" data-to="71">71</div><div class="l">Refereed papers</div><div class="s" id="span">2018 &ndash; 2026</div></div>
-    <div class="metric"><div class="n" id="hidx" data-to="18">18</div><div class="l">h-index</div><div class="s" id="hsub">17 Scopus &middot; 17 WoS</div></div>
-    <div class="metric"><div class="n" id="cites" data-to="800">800</div><div class="l">Citations</div><div class="s" id="csub">665 Scopus &middot; 712 WoS</div></div>
+    <div class="metric"><div class="n" id="hidx" data-to="18">18</div><div class="l">h-index &middot; OpenAlex</div><div class="s" id="hsub">18 Scholar &middot; 17 WoS &middot; 17 Scopus</div></div>
+    <div class="metric"><div class="n" id="cites" data-to="800">800</div><div class="l">Citations &middot; OpenAlex</div><div class="s" id="csub">880 Scholar &middot; 774 WoS &middot; 718 Scopus</div></div>
     <div class="metric"><div class="n"><i>2</i></div><div class="l">Editorial boards</div><div class="s">Discover Physics &middot; Discover Quantum Science</div></div>
   </div>
+  <p class="asof">Large figures are read from OpenAlex each time this page loads. The smaller figures are from Google Scholar, Web of Science and Scopus, checked October 2026.</p>
 </div>
 
 <section id="about" class="rv">
