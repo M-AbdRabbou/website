@@ -369,11 +369,11 @@ img{max-width:100%}
 <div class="band">
   <div class="band-in">
     <div class="metric"><div class="n" id="npub" data-to="71">71</div><div class="l">Refereed papers</div><div class="s" id="span">2018 &ndash; 2026</div></div>
-    <div class="metric"><div class="n" id="hidx" data-to="18">18</div><div class="l">h-index &middot; OpenAlex</div><div class="s" id="hsub">18 Scholar &middot; 17 WoS &middot; 17 Scopus</div></div>
-    <div class="metric"><div class="n" id="cites" data-to="800">800</div><div class="l">Citations &middot; OpenAlex</div><div class="s" id="csub">880 Scholar &middot; 774 WoS &middot; 718 Scopus</div></div>
+    <div class="metric"><div class="n" data-to="18">18</div><div class="l">h-index</div><div class="s">17 WoS &middot; 17 Scopus</div></div>
+    <div class="metric"><div class="n" data-to="880">880</div><div class="l">Citations</div><div class="s">774 WoS &middot; 718 Scopus</div></div>
     <div class="metric"><div class="n"><i>2</i></div><div class="l">Editorial boards</div><div class="s">Discover Physics &middot; Discover Quantum Science</div></div>
   </div>
-  <p class="asof">Large figures are read from OpenAlex each time this page loads. The smaller figures are from Google Scholar, Web of Science and Scopus, checked October 2026.</p>
+  <p class="asof">Headline figures are from Google Scholar. Web of Science and Scopus figures are given beneath them. All checked October 2026.</p>
 </div>
 
 <section id="about" class="rv">
@@ -885,22 +885,6 @@ document.querySelectorAll('.copy').forEach(function(b){
     }catch(e){ fallback(); }
   });
 });
-
-/* ---------- h-index and citation count, read live from OpenAlex ---------- */
-(function(){
-  if(!window.fetch) return;
-  var h=document.getElementById('hidx'), c=document.getElementById('cites');
-  if(!h&&!c) return;
-  fetch('https://api.openalex.org/authors/https://orcid.org/0000-0003-3197-4724')
-  .then(function(r){ return r.ok?r.json():null; })
-  .then(function(d){
-    if(!d) return;
-    var st=d.summary_stats||{};
-    if(h&&st.h_index){ h.setAttribute('data-to',String(st.h_index)); h.textContent=String(st.h_index); }
-    if(c&&d.cited_by_count){ c.setAttribute('data-to',String(d.cited_by_count)); c.textContent=String(d.cited_by_count); }
-  })
-  .catch(function(){ /* the printed figures stand */ });
-})();
 
 /* ---------- peer-review record, read live from ORCID ---------- */
 (function(){
