@@ -364,8 +364,8 @@ img{max-width:100%}
 <div class="band">
   <div class="band-in">
     <div class="metric"><div class="n" id="npub" data-to="71">71</div><div class="l">Refereed papers</div><div class="s" id="span">2018 &ndash; 2026</div></div>
-    <div class="metric"><div class="n" data-to="18">18</div><div class="l">h-index</div><div class="s">17 WoS &middot; 17 Scopus</div></div>
-    <div class="metric"><div class="n" data-to="880">880</div><div class="l">Citations</div><div class="s">774 WoS &middot; 718 Scopus</div></div>
+    <div class="metric"><div class="n" id="hidx" data-to="18">18</div><div class="l">h-index</div><div class="s" id="hsub">18 Scholar &middot; 17 WoS &middot; 17 Scopus</div></div>
+    <div class="metric"><div class="n" id="cites" data-to="880">880</div><div class="l">Citations</div><div class="s" id="csub">880 Scholar &middot; 774 WoS &middot; 718 Scopus</div></div>
     <div class="metric"><div class="n"><i>2</i></div><div class="l">Editorial boards</div><div class="s">Discover Physics &middot; Discover Quantum Science</div></div>
   </div>
 </div>
@@ -498,11 +498,6 @@ img{max-width:100%}
   <div class="years" id="years"></div>
   <div class="count" id="count"></div>
   <div class="pubs" id="pubs"></div>
-  <div class="sync" id="sync" hidden>
-    <h3>Indexed under my ORCID but not yet listed above</h3>
-    <div class="note">Read live from Crossref each time this page loads.</div>
-    <div class="list" id="synclist"></div>
-  </div>
 </section>
 
 <section id="talks" class="rv">
@@ -871,6 +866,29 @@ document.querySelectorAll('.copy').forEach(function(b){
   });
 });
 
+/* ---------- h-index and citations, read live from OpenAlex ---------- */
+(function(){
+  if(!window.fetch) return;
+  var h=document.getElementById('hidx'), c=document.getElementById('cites');
+  if(!h&&!c) return;
+  fetch('https://api.openalex.org/authors/https://orcid.org/0000-0003-3197-4724')
+  .then(function(r){ return r.ok?r.json():null; })
+  .then(function(d){
+    if(!d) return;
+    var st=d.summary_stats||{};
+    /* the printed figure is a floor: Scholar counts sources OpenAlex does not */
+    if(h&&st.h_index){
+      var hv=Math.max(st.h_index, parseInt(h.getAttribute('data-to'),10)||0);
+      h.setAttribute('data-to',String(hv)); h.textContent=String(hv);
+    }
+    if(c&&d.cited_by_count){
+      var cv=Math.max(d.cited_by_count, parseInt(c.getAttribute('data-to'),10)||0);
+      c.setAttribute('data-to',String(cv)); c.textContent=String(cv);
+    }
+  })
+  .catch(function(){});
+})();
+
 /* ---------- peer-review record, read live from ORCID ---------- */
 (function(){
   var grid=document.getElementById('revgrid');
@@ -939,39 +957,86 @@ document.querySelectorAll('.copy').forEach(function(b){
   });
 })();
 
-/* ---------- live check against Crossref, keyed on my ORCID ---------- */
+/* ---------- new papers, merged into the list from Crossref each load ---------- */
 (function(){
-  var box=document.getElementById('sync'), list=document.getElementById('synclist');
-  if(!box||!list||!window.fetch) return;
-  var have={};
-  P.forEach(function(p){ have[p[4].toLowerCase()]=1; });
-  /* preprint servers: the published version is what belongs in the list */
-  var skip=/^10\.(21203|2139|48550|20944)\//;
+  if(!window.fetch) return;
+  var box=document.getElementById('sync');
+  if(box) box.hidden=true;
+
+  var ME=/abd.?rabbou/i;                    /* my surname, however the publisher spells it */
+  var skip=/^10\.(21203|2139|48550|20944)\//;   /* preprint servers */
+
+  function initials(given){
+    if(!given) return '';
+    return given.replace(/[‐-―]/g,'-').split(/[\s.]+/).filter(Boolean)
+      .map(function(w){
+        return w.indexOf('-')>0
+          ? w.split('-').map(function(x){ return x.charAt(0).toUpperCase()+'.'; }).join('-')
+          : w.charAt(0).toUpperCase()+'.';
+      }).join(' ');
+  }
+
+  function authorList(arr){
+    if(!arr||!arr.length) return '';
+    return arr.map(function(a){
+      var fam=(a.family||'').replace(/[‐-―]/g,'-');
+      if(!fam) return (a.name||'').trim();
+      if(ME.test(fam)) return 'M. Y. Abd-Rabbou';     /* the exact form the page highlights */
+      var ini=initials(a.given);
+      return ini ? ini+' '+fam : fam;
+    }).filter(Boolean).join(', ');
+  }
+
+  function venue(it){
+    var j=(it['container-title']&&it['container-title'][0])||'';
+    j=j.replace(/\s*:\s*.*$/,'');                      /* drop the subtitle publishers tack on */
+    var vol=it.volume||'';
+    var num=it['article-number']||it.page||'';
+    var out=j;
+    if(vol) out+=' '+vol;
+    if(num) out+=(vol?', ':' ')+num;
+    return out;
+  }
+
   var url='https://api.crossref.org/works?filter=orcid:http://orcid.org/0000-0003-3197-4724'+
-          '&rows=200&select=DOI,title,container-title,issued';
+          '&rows=200&select=DOI,title,container-title,issued,author,volume,page,article-number';
+
   fetch(url).then(function(r){ return r.ok?r.json():null; }).then(function(d){
     if(!d||!d.message||!d.message.items) return;
-    var miss=d.message.items.filter(function(it){
+    var have={};
+    P.forEach(function(p){ have[p[4].toLowerCase()]=1; });
+
+    var added=0;
+    d.message.items.forEach(function(it){
       var doi=(it.DOI||'').toLowerCase();
-      if(!doi||have[doi]||skip.test(doi)) return false;
-      return it['container-title'] && it['container-title'].length;
+      if(!doi||have[doi]||skip.test(doi)) return;
+      if(!it['container-title']||!it['container-title'].length) return;
+      var parts=(it.issued&&it.issued['date-parts']&&it.issued['date-parts'][0])||[];
+      var y=parts[0];
+      if(!y) return;
+      var t=(it.title&&it.title[0])||'';
+      if(!t) return;
+      P.push([y, authorList(it.author), t.replace(/[‐-―]/g,'-'), venue(it), it.DOI]);
+      have[doi]=1;
+      added++;
     });
-    if(!miss.length) return;
-    miss.sort(function(a,b){
-      var ya=(a.issued&&a.issued['date-parts']&&a.issued['date-parts'][0][0])||0;
-      var yb=(b.issued&&b.issued['date-parts']&&b.issued['date-parts'][0][0])||0;
-      return yb-ya;
-    });
-    list.innerHTML=miss.slice(0,12).map(function(it){
-      var y=(it.issued&&it.issued['date-parts']&&it.issued['date-parts'][0][0])||'';
-      var t=(it.title&&it.title[0])||'Untitled';
-      var j=(it['container-title']&&it['container-title'][0])||'';
-      return '<div class="row"><div class="rt">'+esc(t)+'</div>'+
-             '<div class="rm">'+esc(j)+(y?', '+y:'')+' &middot; '+
-             '<a href="https://doi.org/'+it.DOI+'" target="_blank" rel="noopener">DOI</a></div></div>';
-    }).join('');
-    box.hidden=false;
-  }).catch(function(){ /* offline or blocked: the curated list above still stands */ });
+    if(!added) return;
+
+    P.sort(function(x,y){ return y[0]-x[0]; });
+
+    /* a year that did not exist before needs its own tab */
+    years.length=0;
+    P.forEach(function(p){ if(years.indexOf(p[0])<0) years.push(p[0]); });
+    years.sort(function(x,y){ return y-x; });
+    if(years.indexOf(state.y)<0 && state.y!=='all') state.y=years[0];
+
+    var n=document.getElementById('npub');
+    if(n){ n.setAttribute('data-to',String(P.length)); n.textContent=String(P.length); }
+    var sp=document.getElementById('span');
+    if(sp) sp.innerHTML=years[years.length-1]+' &ndash; '+years[0];
+
+    draw();
+  }).catch(function(){ /* offline or blocked: the list in the page still stands */ });
 })();
 
 /* ---------- hero: the Wigner function of an even cat state, drawn as a
